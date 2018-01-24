@@ -6,12 +6,8 @@
 template <class T>
 class Singleton {
 private:
-
-protected:
-	Singleton() {
-		T();
-	}
 	static T* m_Instance;
+
 public:
 	static T* getInstance() {
 		if (m_Instance == nullptr)
@@ -19,3 +15,6 @@ public:
 		return m_Instance;
 	}
 };
+
+template<class T>
+T* Singleton<T>::m_Instance = nullptr;

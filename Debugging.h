@@ -6,6 +6,8 @@
 #include "Singleton.h"
 #include <fstream>
 
+#define LOGPRINT(x) Debugging::getInstance()->print(x)
+
 using namespace std;
 
 class Debugging :public Singleton<Debugging> {
@@ -20,7 +22,10 @@ private:
 	}
 
 public:
-	void print (const char* c) {
-		storage << c;
-	}
+	friend Singleton <Debugging>;
+
+	void print(const char* c);
+
+	bool moduleTest();
 };
+

@@ -18,6 +18,8 @@ private:
 	World();
 
 public:
+	friend Singleton <World>;
+
 	RENDERSTATE renderScene();
 	void drawScene();
 	void addObject(Object object);

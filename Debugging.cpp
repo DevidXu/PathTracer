@@ -10,11 +10,11 @@ void Debugging::print(const char* c) {
 #include "Vector.h"
 bool Debugging::moduleTest() {
 	try {
-		Vector2 a(1.0, 2.0);
-		Vector2 b(2.0, 3.5);
+		Vector3 a(1.0, 2.0, 4.0);
+		Vector3 b(2.0, 3.5, 0.2);
 		cout << a << " " << b << endl;
-		Vector2 c = a + b;
-		cout << "a+b " << (a+b) << endl;
+		Vector3 c = a + b;
+		cout << "a+b " << c << endl;
 		cout << "a==b " << (a == b) << endl;
 		cout << "a*b " << a * b << endl;
 	}

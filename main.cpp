@@ -22,6 +22,6 @@ int main()
 	// world->addObject();
 	// add objects
 	// render scene
-	//world->drawScene();
+	world->drawScene();
 	system("pause");
 }

@@ -116,6 +116,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BBox.h" />
+    <ClInclude Include="BMPGraph.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Debugging.h" />
     <ClInclude Include="Object.h" />
@@ -126,6 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BBox.cpp" />
+    <ClCompile Include="BMPGraph.cpp" />
     <ClCompile Include="Debugging.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />

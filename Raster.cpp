@@ -6,7 +6,7 @@
 #include <direct.h> 
 #include "Raster.h"
 
-#define RENDERIMAGE "./image.pmm"
+#define RENDERIMAGE "./image.bmp"
 #define MAX_PATH 100
 
 // Fill the pixels with vector
@@ -29,35 +29,23 @@ Raster::~Raster() {
 }
 
 void Raster::Render() {
-	FILE* fp;
-	fopen_s(&fp, RENDERIMAGE, "wb");
-	fprintf(fp, "P6\n%d %d\n255\n", WIDTH, HEIGHT);
-	static unsigned char fcolor[3];
-	
-	LOGPRINT("Begin to render the image");
-	try {
-		for (int i = 0; i < WIDTH; i++)
-			for (int j = 0; i < HEIGHT; j++) {
-				Vector4 acolor = pixels[HEIGHT][WIDTH].color;
-				Vector3 color(acolor[0],acolor[1],acolor[2]);
-				color = color * 255;
-				for (int i = 0; i < 3; i++) {
-					fcolor[0] = unsigned char(int(color[0]));
-					if (color[0] > 255) throw(exception("RGB attributes larger than 255"));
-				}
-				fwrite(fcolor, 1, 3, fp);
-			}
-	}
-	catch (exception e) {
-		LOGPRINT("Meet error when rendering the image!");
-		LOGPRINT(e.what());
-	}
+	bmpGraph.setHeight(HEIGHT);
+	bmpGraph.setWidth(WIDTH);
+
+	// use int to reduce the size of transmission
+	int temp[HEIGHT*WIDTH*3];
+	for (int i = 0; i < HEIGHT; i++)
+		for (int j = 0; j < WIDTH; j++) {
+			temp[i*WIDTH * 3 + j * 3 + 0] = i<100?int(pixels[i][j].color[0]*255):255;
+			temp[i*WIDTH * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
+			temp[i*WIDTH * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
+		}
+	bmpGraph.generate(temp, type, RENDERIMAGE);
 
 	LOGPRINT("Finish rendering the image. Check the path for result\n");
-	
-	char buffer[MAX_PATH] = "Current image path:  ";
-	_getcwd(buffer, MAX_PATH);
-	LOGPRINT(buffer);
 
-	return;
+	char buffer[MAX_PATH] = "";
+	_getcwd(buffer, MAX_PATH);
+	strcat_s(buffer, RENDERIMAGE);
+	LOGPRINT(buffer);
 }

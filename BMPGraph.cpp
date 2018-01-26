@@ -6,6 +6,8 @@ typedef unsigned char  BYTE;
 typedef unsigned short WORD;
 typedef unsigned long  DWORD;
 typedef long    LONG;
+
+
 typedef struct {
 	WORD    bfType;
 	DWORD   bfSize;
@@ -28,6 +30,7 @@ typedef struct {
 	DWORD      biClrImportant;
 } BITMAPINFOHEADER;
 
+
 void saveBitmap(const char* name, RasterType mark, int w, int h, int* begin)
 {
 	// Define BMP Size
@@ -37,7 +40,6 @@ void saveBitmap(const char* name, RasterType mark, int w, int h, int* begin)
 	const int height = h;
 	const int width = w;
 	int size = w * h * 3;
-	double x, y;
 	int index;
 
 	// Part.1 Create Bitmap File Header  
@@ -89,6 +91,7 @@ void saveBitmap(const char* name, RasterType mark, int w, int h, int* begin)
 		fclose(output);
 	}
 }
+
 
 void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 	LOGPRINT("Begin to write the image");

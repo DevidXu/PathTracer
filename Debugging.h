@@ -14,18 +14,18 @@ class Debugging :public Singleton<Debugging> {
 private:
 	string LOGFILE = "logging.txt";
 	ofstream storage;
+
 	Debugging() {
 		storage.open(LOGFILE);
-	}
-	~Debugging() {
-		storage.close();
 	}
 
 public:
 	friend Singleton <Debugging>;
+	~Debugging() {
+		storage.close();
+	}
 
 	void print(const char* c);
 
 	bool moduleTest();
 };
-

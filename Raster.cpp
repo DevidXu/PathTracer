@@ -22,11 +22,31 @@ Raster::Raster() {
 	}
 }
 
+
 Raster::~Raster() {
 	for (int i = 0; i < HEIGHT; i++)
 		pixels[i].clear();
 	pixels.clear();
 }
+
+
+char* Raster::getRasterType() {
+	return (char*)type;
+}
+
+
+void Raster::setRastertype(const char* t) {
+	try {
+		if (t == "RGB") type = RGB;
+		else if (t == "GRAY") type = GRAY;
+		else throw("The type is not supported for the raster!");
+	}
+	catch (exception e) {
+		LOGPRINT("You meet error when setting the type for the raster.");
+		LOGPRINT(e.what());
+	}
+}
+
 
 void Raster::Render() {
 	bmpGraph.setHeight(HEIGHT);
@@ -36,7 +56,7 @@ void Raster::Render() {
 	int temp[HEIGHT*WIDTH*3];
 	for (int i = 0; i < HEIGHT; i++)
 		for (int j = 0; j < WIDTH; j++) {
-			temp[i*WIDTH * 3 + j * 3 + 0] = i<100?int(pixels[i][j].color[0]*255):255;
+			temp[i*WIDTH * 3 + j * 3 + 0] = int(pixels[i][j].color[0]*255);
 			temp[i*WIDTH * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
 			temp[i*WIDTH * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
 		}

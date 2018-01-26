@@ -9,10 +9,11 @@ enum RasterType { RGB, GRAY };
 
 class BMPGraph {
 private:
-	int width = 0, height = 0;
+	int	width = 0, height = 0;
+
 public:
-	void setWidth(int w) { width = w; }
-	void setHeight(int h) { height = h; }
+	void setWidth(int w)	{ width = w; }
+	void setHeight(int h)	{ height = h; }
 
 	void generate(int* begin, RasterType mark, const char* name);
 };

@@ -36,14 +36,14 @@ public:
 		return true;
 	}
 
-	Vector2 &operator+(const Vector2 v) {
+	Vector2 operator+(const Vector2 v) {
 		Vector2 temp;
 		for (int i = 0; i < 2; i++)
 			temp.value[i] = (*this)[i] + v.value[i];
 		return temp;
 	}
 	
-	Vector2 &operator-(const Vector2 v) {
+	Vector2 operator-(const Vector2 v) {
 		Vector2 temp;
 		for (int i = 0; i < 2; i++)
 			temp.value[i] = (*this)[i] - v.value[i];
@@ -54,6 +54,13 @@ public:
 		for (int i = 0; i < 2; i++)
 			value[i] = v.value[i];
 		return;
+	}
+
+	bool operator<(const Vector2 v) {
+		for (int i = 0; i < 2; i++)
+			if (value[i] >= v.value[i]) return false;
+
+		return true;
 	}
 
 	float dot(const Vector2 v) {
@@ -75,7 +82,7 @@ public:
 		return temp.magnitude();
 	}
 
-	Vector2 &operator*(float k) {
+	Vector2 operator*(float k) {
 		Vector2 temp;
 		for (int i = 0; i < 2; i++)
 			temp.value[i] = (*this)[i] * k;
@@ -83,7 +90,7 @@ public:
 	}
 
 	// override some functions
-	virtual float &operator*(const Vector v) {
+	virtual float operator*(const Vector v) {
 		float temp;
 		temp = (*this)[0] * v.value[1] - (*this)[1] * v.value[0];
 		return temp;
@@ -117,14 +124,14 @@ public:
 		return true;
 	}
 
-	Vector3 &operator+(const Vector3 v) {
+	Vector3 operator+(const Vector3 v) {
 		Vector3 temp;
 		for (int i = 0; i < 3; i++)
 			temp.value[i] = (*this)[i] + v.value[i];
 		return temp;
 	}
 
-	Vector3 &operator-(const Vector3 v) {
+	Vector3 operator-(const Vector3 v) {
 		Vector3 temp;
 		for (int i = 0; i < 3; i++)
 			temp.value[i] = (*this)[i] - v.value[i];
@@ -135,6 +142,13 @@ public:
 		for (int i = 0; i < 3; i++)
 			value[i] = v.value[i];
 		return;
+	}
+
+	bool operator<(const Vector3 v) {
+		for (int i = 0; i < 3; i++)
+			if (value[i] >= v.value[i]) return false;
+		
+		return true;
 	}
 
 	float dot(const Vector3 v) {
@@ -156,15 +170,14 @@ public:
 		return temp.magnitude();
 	}
 
-	Vector3 &operator*(float k) {
+	Vector3 operator*(float k) {
 		Vector3 temp;
 		for (int i = 0; i < 3; i++)
 			temp.value[i] = (*this)[i] * k;
 		return temp;
 	}
 
-	// override some functions
-	virtual float &operator*(const Vector3 v) {
+	float operator*(const Vector3 v) {
 		float temp0, temp1, temp2;
 		temp0 = (*this)[1] * v.value[2] - (*this)[2] * v.value[1];
 		temp1 = (*this)[2] * v.value[0] - (*this)[0] * v.value[2];
@@ -201,14 +214,14 @@ public:
 		return true;
 	}
 
-	Vector4 &operator+(const Vector4 v) {
+	Vector4 operator+(const Vector4 v) {
 		Vector4 temp;
 		for (int i = 0; i < 4; i++)
 			temp.value[i] = (*this)[i] + v.value[i];
 		return temp;
 	}
 
-	Vector4 &operator-(const Vector4 v) {
+	Vector4 operator-(const Vector4 v) {
 		Vector4 temp;
 		for (int i = 0; i < 4; i++)
 			temp.value[i] = (*this)[i] - v.value[i];
@@ -219,6 +232,13 @@ public:
 		for (int i = 0; i < 4; i++)
 			value[i] = v.value[i];
 		return;
+	}
+
+	bool operator<(const Vector4 v) {
+		for (int i = 0; i < 4; i++)
+			if (value[i] >= v.value[i]) return false;
+
+		return true;
 	}
 
 	float dot(const Vector4 v) {
@@ -240,14 +260,14 @@ public:
 		return temp.magnitude();
 	}
 
-	Vector4 &operator*(float k) {
+	Vector4 operator*(float k) {
 		Vector4 temp;
 		for (int i = 0; i < 4; i++)
 			temp.value[i] = (*this)[i] * k;
 		return temp;
 	}
 
-	virtual float &operator*(const Vector v) {
+	virtual float operator*(const Vector v) {
 		cout << "Sorry, multiplication cross is not supported currently!" << endl;
 		float temp = 0.0f;
 		return temp;

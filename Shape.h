@@ -34,6 +34,10 @@ public:
 	void scale(float s);
 
 	void scale(Vector3 s);
+
+	// This defines how to add more vertexs to the model; the iteration means iteration number
+	// and the degree control the mutation degree of the model
+	virtual void tessellation(float iterations, float degree) {};
 };
 
 
@@ -46,4 +50,22 @@ public:
 	};
 
 	Rectangle(Vector3 small, Vector3 big);
+
+	virtual void tessellation(float iterations, float degree);
+};
+
+
+class Sphere :public Shape {
+private:
+	float radius;
+
+public:
+	Sphere() {
+		setCenter(Vector3(0.0f, 0.0f, 0.0f));
+		radius = 0.0f;
+	};
+
+	Sphere(Vector3 m_center, float m_radius);
+
+	virtual void tessellation(float iteration, float degree);
 };

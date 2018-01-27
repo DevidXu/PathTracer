@@ -24,6 +24,8 @@ private:
 public:
 	friend Singleton <World>;
 
+	void initialize();
+
 	RENDERSTATE renderScene();
 
 	void drawScene();

@@ -82,6 +82,14 @@ public:
 		return temp.magnitude();
 	}
 
+	Vector2 normalize() {
+		float length = magnitude();
+		_ASSERT(length != 0.0f);
+		for (int i = 0; i < 2; i++)
+			value[i] = value[i] / length;
+		return *this;
+	}
+
 	Vector2 operator*(float k) {
 		Vector2 temp;
 		for (int i = 0; i < 2; i++)
@@ -177,6 +185,14 @@ public:
 		return temp;
 	}
 
+	Vector3 normalize() {
+		float length = magnitude();
+		_ASSERT(length != 0.0f);
+		for (int i = 0; i < 3; i++)
+			value[i] = value[i] / length;
+		return *this;
+	}
+
 	float operator*(const Vector3 v) {
 		float temp0, temp1, temp2;
 		temp0 = (*this)[1] * v.value[2] - (*this)[2] * v.value[1];
@@ -258,6 +274,14 @@ public:
 	float distance(const Vector4 v) {
 		Vector4 temp = (*this) - v;
 		return temp.magnitude();
+	}
+
+	Vector4 normalize() {
+		float length = magnitude();
+		_ASSERT(length != 0.0f);
+		for (int i = 0; i < 4; i++)
+			value[i] = value[i] / length;
+		return *this;
 	}
 
 	Vector4 operator*(float k) {

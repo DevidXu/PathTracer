@@ -9,6 +9,7 @@ Writer: Xu Dewei
 #include "iostream"
 #include "Singleton.h"
 #include "Debugging.h"
+#include "Constants.h"
 #include "World.h"
 #include "Shape.h"
 using namespace std;
@@ -17,19 +18,13 @@ int main()
 {
 	Debugging::getInstance()->moduleTest();
 
-	cout << "This is the realization of a path tracer!" << endl;
 	World* world = World::getInstance();
-	
-	shared_ptr<Object> obj1 = make_shared<Object>(
-		make_shared<Rectangle>(
-			Vector3(1.0, 1.0, 1.0),
-			Vector3(2.0, 2.0, 2.0)
-			)
-		);
 
-	world->addObject(obj1);
-	// add objects
+	// intialize the bounding box and add two rectangles.s
+	world->initialize();
+
 	// render scene
+	world->renderScene();
 
 	// draw each pixel of the raster on an bmp map
 	world->drawScene();

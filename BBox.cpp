@@ -61,7 +61,15 @@ void Cube::insertTriangle(Triangle* triangle) {
 
 BBox::BBox() {
 	small = Vector3(0.0f, 0.0f, 0.0f);
-	large = Vector3(BOX_LENGTH, BOX_WIDTH, BOX_HEIGHT);
+	large = Vector3(1.0f, 1.0f, 1.0f);
+
+	box.setCube(small, large);
+}
+
+
+BBox::BBox(Vector3 s, Vector3 l) {
+	small = s;
+	large = l;
 
 	box.setCube(small, large);
 }

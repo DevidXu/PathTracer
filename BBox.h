@@ -64,6 +64,7 @@ private:
 public:
 	friend	Singleton<BBox>;
 	BBox();
+	BBox(Vector3 s, Vector3 l);
 	~BBox(); // shared_ptr requirement
 
 	void	addTriangle(Triangle* triangle);

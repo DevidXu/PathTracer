@@ -20,6 +20,7 @@ void World::initialize() {
 	shared_ptr<Object> box, obj1, obj2;
 
 	try {
+		// The big cornell box
 		box = make_shared<Object>(
 			make_shared<Rectangle>(
 				Vector3(0.0, 0.0, 0.0),
@@ -27,14 +28,17 @@ void World::initialize() {
 				)
 			);
 
+		// the sphere of transparent material
 		obj1 = make_shared<Object>(
-			make_shared<Rectangle>(
-				Vector3(1.0, 1.0, 1.0),
-				Vector3(2.0, 2.0, 2.0)
+			make_shared<Sphere>(
+				Vector3(1.0f, 1.0f, 1.0f),
+				1.0f
 				)
 			);
+		
+		obj1->tessellate(2);
 
-
+		// the rectangle of normal material
 		obj2 = make_shared<Object>(
 			make_shared<Rectangle>(
 				Vector3(2.0, 0.0, 2.0),
@@ -64,6 +68,8 @@ void World::initialize() {
 
 // This function begins path tracing
 RENDERSTATE World::renderScene() {
+	
+
 	return true;
 }
 
@@ -75,5 +81,6 @@ void World::drawScene() {
 
 void World::addObject(shared_ptr<Object> object) {
 	bbox->addMesh(object->getMesh());
+
 	return;
 }

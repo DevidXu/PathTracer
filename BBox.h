@@ -16,7 +16,7 @@ through the bounding box to find all possible triangles to hit.
 #include "Constants.h"
 
 // The whole struct like a cube divided layer by layer. Use a KD Tree
-enum LayerMark {X, Y, Z};
+enum LayerMark { X, Y, Z };
 
 class Cube {
 private:

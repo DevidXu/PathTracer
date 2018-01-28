@@ -25,6 +25,45 @@ float Triangle::averageSideLength() {
 }
 
 
+bool Triangle::isTriangle() {
+	for (int i = 0; i < 3; i++)
+		if (*vertex[i] == *vertex[(i + 1) % 3]) return false;
+
+	return true;
+}
+
+
+Vector3 Triangle::normalFaceUnit() {
+	_ASSERT(isTriangle());
+
+	Vector3 temp0 = *vertex[2] - *vertex[0];
+	Vector3 temp1 = *vertex[2] - *vertex[1];
+
+	Vector3 result = (temp0*temp1).normalize();
+
+	int plus = 0, minus = 0;
+	for (int i = 0; i < 3; i++) {
+		float dot = result.dot(*normal[i]);
+		if (dot>=0.0f) plus += 1;
+		if (dot<=0.0f) minus -= 1;
+	}
+
+	try {
+		_ASSERT(minus == -3 || plus == 3);
+	}
+	catch (exception e) {
+		throw("Wrong normal information! Can't generate normal vector.");
+	}
+
+	if (minus == -3) 
+		normalVector = Vector3(0.0f, 0.0f, 0.0f) - result;
+	else
+		normalVector = result;
+
+	return normalVector;
+}
+
+
 void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length) {
 	
 	for (int i = 0; i < 3; i++) {

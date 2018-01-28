@@ -13,16 +13,16 @@ Shape::Shape() {
 
 
 Shape::~Shape() {
-	for (auto ptr : vertexs)
-		delete ptr;
-	for (auto ptr : normals)
-		delete ptr;
-	for (auto ptr : meshes)
-		delete ptr;
 
 	vertexs.clear();
 	normals.clear();
 	meshes.clear();
+}
+
+
+void Shape::setOwner(Object* m) {
+	for (auto& ptr : meshes)
+		ptr->setOwner(m);
 }
 
 
@@ -95,16 +95,16 @@ void Shape::rotate(Vector4 quaternion) {
 
 	for (auto ptr : vertexs) {
 		Vector3 temp(
-			matrix0*(*ptr),
-			matrix1*(*ptr),
-			matrix2*(*ptr)
+			matrix0.dot(*ptr),
+			matrix1.dot(*ptr),
+			matrix2.dot(*ptr)
 		);
 
 		for (int i = 0; i < 3; i++)
 			ptr->value[i] = temp[i];
 	}
 
-	center = Vector3(matrix0*center, matrix1*center, matrix2*center);
+	center = Vector3(matrix0.dot(center), matrix1.dot(center), matrix2.dot(center));
 
 	return;
 }
@@ -184,7 +184,7 @@ Rectangle::Rectangle(Vector3 small, Vector3 big) {
 }
 
 
-void Rectangle::tessellation(float iteration, float degree) {
+void Rectangle::tessellate(float iteration, float degree) {
 	// Rectangle has no need to tessellate here
 	return;
 }
@@ -204,16 +204,16 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 	Vector3* v[6];
 	Vector3* n[6];
 
-	v[0] = new Vector3(m_center + Vector3(0.0f, 0.0f, m_radius));
-	v[1] = new Vector3(m_center + Vector3(-m_radius, 0.0f, 0.0f));
-	v[2] = new Vector3(m_center + Vector3(0.0f, m_radius, 0.0f));
-	v[3] = new Vector3(m_center + Vector3(m_radius, 0.0f, 0.0f));
-	v[4] = new Vector3(m_center + Vector3(0.0f, -m_radius, 0.0f));
-	v[5] = new Vector3(m_center - Vector3(0.0f, 0.0f, -m_radius));
+	v[0] = new Vector3(0.0f, 0.0f, m_radius);
+	v[1] = new Vector3(-m_radius, 0.0f, 0.0f);
+	v[2] = new Vector3(0.0f, -m_radius, 0.0f);
+	v[3] = new Vector3(m_radius, 0.0f, 0.0f);
+	v[4] = new Vector3(0.0f, m_radius, 0.0f);
+	v[5] = new Vector3(0.0f, 0.0f, -m_radius);
 
 	float rate = 1 / m_radius;
 	for (int i = 0; i < 6; i++) {
-		(*n[i]) = (*v[i]) * rate;
+		n[i] = new Vector3((*v[i]) * rate);
 		vertexs.push_back(v[i]);
 		normals.push_back(n[i]);
 	}
@@ -232,28 +232,34 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 
 		meshes.push_back(triangle);
 	}
+
+	translate(m_center);
 }
 
 
-void Sphere::tessellation(float iteration, float degree) {
-	int size = (int)meshes.size();
+void Sphere::tessellate(float iteration) {
+	for (int num = 0; num < iteration; num++) {
+		int size = (int)meshes.size();
 
-	for (int i = 0; i < size; i++) {
-		Triangle* triangle = meshes[i];
+		for (int i = 0; i < size; i++) {
+			Triangle* triangle = meshes[i];
 
-		// add new triangles, vertexs and normals into the shape
-		Triangle* tri[3];
-		Vector3 *v[3], *n[3];
-		for (int k = 0; k < 3; k++) {
-			tri[k] = new Triangle();
-			v[k] = new Vector3();
-			n[k] = new Vector3();
-			vertexs.push_back(v[k]);
-			normals.push_back(n[k]);
-			meshes.push_back(tri[k]);
+			// add new triangles, vertexs and normals into the shape
+			Triangle* tri[3];
+			Vector3 *v[3], *n[3];
+			for (int k = 0; k < 3; k++) {
+				tri[k] = new Triangle();
+				v[k] = new Vector3();
+				n[k] = new Vector3();
+				vertexs.push_back(v[k]);
+				normals.push_back(n[k]);
+				meshes.push_back(tri[k]);
+			}
+
+			float len = radius - sqrt(pow(radius, 2) - pow(triangle->averageSideLength() / 2, 2));
+			triangle->tessellate(tri, v, n, len);
 		}
-
-		float len = radius - sqrt(pow(radius, 2) - pow(triangle->averageSideLength() / 2, 2));
-		triangle->tessellate(tri, v, n, len);
 	}
+
+	return;
 }

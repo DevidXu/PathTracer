@@ -193,13 +193,13 @@ public:
 		return *this;
 	}
 
-	float operator*(const Vector3 v) {
+	Vector3 operator*(const Vector3 v) {
 		float temp0, temp1, temp2;
 		temp0 = (*this)[1] * v.value[2] - (*this)[2] * v.value[1];
 		temp1 = (*this)[2] * v.value[0] - (*this)[0] * v.value[2];
 		temp2 = (*this)[0] * v.value[1] - (*this)[1] * v.value[0];
-		float temp = sqrt(temp0*temp0 + temp1*temp1 + temp2*temp2);
-		return temp;
+
+		return Vector3(temp0, temp1, temp2);
 	}
 };
 

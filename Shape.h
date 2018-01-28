@@ -3,8 +3,11 @@
 #include "Vector.h"
 #include "BBox.h"
 #include "Triangle.h"
+#include "Material.h"
 
 #include <vector>
+
+class Object;
 
 class Shape {
 protected:
@@ -20,6 +23,8 @@ public:
 	~Shape();
 
 	void setCenter(Vector3 v) { center = v; }
+
+	void setOwner(Object* m);
 
 	Mesh getMesh() { return meshes; }
 
@@ -37,7 +42,7 @@ public:
 
 	// This defines how to add more vertexs to the model; the iteration means iteration number
 	// and the degree control the mutation degree of the model
-	virtual void tessellation(float iterations, float degree) {};
+	virtual void tessellate(float iterations) {};
 };
 
 
@@ -51,7 +56,7 @@ public:
 
 	Rectangle(Vector3 small, Vector3 big);
 
-	virtual void tessellation(float iterations, float degree);
+	virtual void tessellate(float iterations, float degree);
 };
 
 
@@ -67,5 +72,5 @@ public:
 
 	Sphere(Vector3 m_center, float m_radius);
 
-	virtual void tessellation(float iteration, float degree);
+	virtual void tessellate(float iteration);
 };

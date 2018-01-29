@@ -5,17 +5,19 @@ This class is the main class after we start the program. It will construct the w
  and render the scene with path tracer
 */
 #include "Singleton.h"
-#include "Raster.h"
 #include "BBox.h"
 #include "Object.h"
+#include "Camera.h"
+#include "Ray.h"
+#include "Constants.h"
 #include <memory>
 #define RENDERSTATE bool
 
 class World :public Singleton<World> {
 private:
 	// variables
-	shared_ptr<Raster> raster; // store the rendered raster
 	shared_ptr<BBox> bbox;
+	shared_ptr<Camera> camera;
 
 	// functions
 	World();

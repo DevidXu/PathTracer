@@ -10,13 +10,16 @@
 #define MAX_PATH 100
 
 // Fill the pixels with vector
-Raster::Raster() {
-	for (int i = 0; i < HEIGHT; i++) {
+Raster::Raster(int w, int h) {
+	width = w; 
+	height = h;
+
+	for (int i = 0; i < height; i++) {
 		vector<Pixel> line;
 		line.clear();
-		line.reserve(WIDTH);
+		line.reserve(width);
 
-		for (int j = 0; j < WIDTH; j++)
+		for (int j = 0; j < width; j++)
 			line.push_back(Pixel());
 		pixels.push_back(line);
 	}
@@ -24,7 +27,7 @@ Raster::Raster() {
 
 
 Raster::~Raster() {
-	for (int i = 0; i < HEIGHT; i++)
+	for (int i = 0; i < height; i++)
 		pixels[i].clear();
 	pixels.clear();
 }
@@ -49,18 +52,20 @@ void Raster::setRastertype(const char* t) {
 
 
 void Raster::Render() {
-	bmpGraph.setHeight(HEIGHT);
-	bmpGraph.setWidth(WIDTH);
+	bmpGraph.setHeight(height);
+	bmpGraph.setWidth(width);
 
 	// use int to reduce the size of transmission
-	int temp[HEIGHT*WIDTH*3];
-	for (int i = 0; i < HEIGHT; i++)
-		for (int j = 0; j < WIDTH; j++) {
-			temp[i*WIDTH * 3 + j * 3 + 0] = int(pixels[i][j].color[0]*255);
-			temp[i*WIDTH * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
-			temp[i*WIDTH * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
+	int* temp = new int [height*width*3];
+	for (int i = 0; i < height; i++)
+		for (int j = 0; j < width; j++) {
+			temp[i*width * 3 + j * 3 + 0] = int(pixels[i][j].color[0]*255);
+			temp[i*width * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
+			temp[i*width * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
 		}
 	bmpGraph.generate(temp, type, RENDERIMAGE);
+	delete [] temp;
+
 
 	LOGPRINT("Finish rendering the image. Check the path for result\n");
 

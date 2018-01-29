@@ -14,6 +14,7 @@
 
 class Raster{
 private:
+	int height, width;
 
 	BMPGraph	bmpGraph;
 	RasterType	type = RGB; // default value: RGB
@@ -30,7 +31,9 @@ private:
 	std::vector<std::vector<Pixel>> pixels;
 
 public:
-	Raster();
+
+	Raster(int w = 0, int h = 0);
+
 	~Raster();
 
 	void Render();
@@ -38,4 +41,8 @@ public:
 	void setRastertype(const char* t);
 
 	char* getRasterType();
+
+	int getWidth() { return width; }
+
+	int getHeight() { return height; }
 };

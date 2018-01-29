@@ -2,11 +2,16 @@
 #include "World.h"
 
 World::World() {
-	raster = make_shared<Raster>(); // initialize the rasetr (each pixel)
+
 	bbox = make_shared<BBox>(
 		Vector3(0.0f,0.0f,0.0f),
 		Vector3(BOX_LENGTH, BOX_WIDTH, BOX_HEIGHT)
-		);		// initialize the bounding box (Cornell box of 4:4:4)
+		);							// initialize the bounding box (Cornell box of 4:4:4)
+
+	camera = make_shared<Camera>(
+		Vector3(0.0f, 1.0f, 1.5f),	// position
+		Vector3(0.0f, 1.0f, 0.0f)	// forward
+		);
 
 	LOGPRINT("This is the realization of a path tracer!");
 }
@@ -31,7 +36,7 @@ void World::initialize() {
 		// the sphere of transparent material
 		obj1 = make_shared<Object>(
 			make_shared<Sphere>(
-				Vector3(1.0f, 1.0f, 1.0f),
+				Vector3(1.0f, 3.5f, 1.0f),
 				1.0f
 				)
 			);
@@ -68,14 +73,22 @@ void World::initialize() {
 
 // This function begins path tracing
 RENDERSTATE World::renderScene() {
-	
+	int height = camera->getHeight, width = camera->getWidth();
+
+	for (int i = 0;i<height;i++)
+		for (int j = 0; j < width; j++) {
+			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
+			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
+
+			camera->generateRay(rays, i, j);
+		}
 
 	return true;
 }
 
 // This function saves RGB data and store it as a graph.
 void World::drawScene() {
-	return raster->Render();
+	return camera->drawScene();
 }
 
 

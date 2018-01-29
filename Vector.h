@@ -97,6 +97,13 @@ public:
 		return temp;
 	}
 
+	Vector2 rotate(float angle) {
+		Vector2 temp0(cos(angle), -sin(angle)), temp1(sin(angle), cos(angle));
+		Vector2 result(this->dot(temp0), this->(temp1));
+		
+		return result;
+	}
+
 	// override some functions
 	virtual float operator*(const Vector v) {
 		float temp;

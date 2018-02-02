@@ -26,6 +26,7 @@ public:
 
 	int getWidth() { return raster->getWidth(); }
 	int getHeight() { return raster->getHeight(); }
+	Vector3 getPosition() { return position; }
 
 	void Render();
 
@@ -33,7 +34,9 @@ public:
 
 	void translate(Vector3 movement);
 
-	void rotate(Vector3 eulerAngle); // the mid value should be 0 to add dead lock; only yaw and pitch; unit is degree
+	// calculate the angle if the camera rotate a certain angle
+	// it will simplify the calculation for ray direction
+	Vector3 rotate(Vector3 eulerAngle); // the mid value should be 0 to add dead lock; only yaw and pitch; unit is degree
 
 	void generateRay(shared_ptr<PixelRays> rays, int height, int width);
 };

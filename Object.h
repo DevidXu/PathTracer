@@ -15,7 +15,13 @@ private:
 	shared_ptr<Shape> shape;
 	shared_ptr<Material> material;
 
+	Vector3 emissive, color;
+
 public:
+	Vector3 getEmissive() { return emissive; }
+	Vector3 getColor() { return color; }
+
+
 	Object() {
 		shape = make_shared<Shape>();
 		//shape->setOwner(this);
@@ -23,26 +29,35 @@ public:
 		material = make_shared<Material>();
 	}
 
+	
 	Object(shared_ptr<Shape> m_shape) :shape(m_shape) {
 		//shape->setOwner(this);
 	};
 
+	
 	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material) 
 		:shape(m_shape), material(m_material) {
 		//shape->setOwner(this);
 	};
 	
+
 	Mesh getMesh() {
 		return shape->getMesh();
 	}
 
+	
+	shared_ptr<Material> getMaterial() { return material; }
+
+	
 	void tessellate(float iterations) {
 		shape->tessellate(iterations);
 
 		return;
 	};
 
+	
 	~Object() {};
 
+	
 	friend class Triangle;
 };

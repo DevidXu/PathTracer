@@ -64,6 +64,37 @@ Vector3 Triangle::normalFaceUnit() {
 }
 
 
+// employ ray-triangle intersect detection by Tomas Moller
+bool Triangle::hitRay(shared_ptr<Ray> ray, shared_ptr<Vector3> hitPoint) {
+	float det, inv_det;
+	float u, v;
+	Vector3 edge1 = *vertex[1] - *vertex[0], edge2 = *vertex[2] - *vertex[0];
+
+	Vector3 pvec = ray->getDirection()*edge2;
+	det = edge1.dot(pvec);
+
+	if (det > -EPISILON && det < EPISILON) return false;
+	inv_det = 1.0f / det;
+
+	Vector3 tvec = ray->getOrigin() - *vertex[0];
+
+	u = tvec.dot(pvec)*inv_det;
+	if (u<0.0f || u>1.0f) return false;
+
+	Vector3 qvec = tvec * edge1;
+	v = ray->getDirection().dot(qvec)*inv_det;
+	if (v<0.0f || u + v>1.0f) return false;
+
+	float t = edge2.dot(qvec);
+	t *= inv_det;
+
+	if (t <= 0.0f) return false;
+
+	*hitPoint = Vector3(ray->getOrigin() + ray->getDirection()*t);
+	return true;
+}
+
+
 void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length) {
 	
 	for (int i = 0; i < 3; i++) {

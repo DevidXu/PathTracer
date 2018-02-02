@@ -2,6 +2,9 @@
 
 // This defines the class of a triangle. It contains the normal and vertex information
 #include "Vector.h"
+#include "Ray.h"
+#include "Constants.h"
+#include <memory>
 #include <vector>
 
 class Object;
@@ -61,9 +64,14 @@ public:
 		owner = m;
 	}
 
+	Object* getOwner() { return owner; }
+
 	float averageSideLength();
 
 	Vector3 normalFaceUnit(); // return the normal vector prependicular to the plane
+
+	// return the meeting point of the ray and the triangle, if no, return nullptr;
+	bool hitRay(shared_ptr<Ray> ray, shared_ptr<Vector3> hitPoint);
 
 	/* How we tessellate:
 	first: we divide the triangle into 4 parts and add three vertexs correspondingly. before

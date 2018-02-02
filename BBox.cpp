@@ -1,5 +1,9 @@
 #include "BBox.h"
 
+float MIN(float a, float b) {
+	return a < b ? a : b;
+}
+
 void Cube::setCube(Vector3 s, Vector3 l) {
 	try {
 		_ASSERT(s < l);
@@ -59,6 +63,125 @@ void Cube::insertTriangle(Triangle* triangle) {
 }
 
 
+Triangle* Cube::intersect(shared_ptr<Ray> ray, float* dis) {
+	float distance = 0.0f;
+	Triangle* hTriangle = nullptr;
+
+	for (auto &ptr : triangle_ptr) {
+		shared_ptr<Vector3> hitPoint = make_shared<Vector3>();
+		if (ptr->hitRay(ray, hitPoint)) {
+			float temp_distance = ray->getOrigin().distance(*hitPoint);
+			if (hTriangle == nullptr || temp_distance < distance) {
+				distance = ray->getOrigin().distance(*hitPoint);
+				hTriangle = ptr;
+			}
+		}
+	}
+
+	*dis = distance;
+
+	return hTriangle;
+}
+
+
+// detect whether the ray will cross the cube; if cross, change the distance correspondingly
+bool Cube::hitRay(shared_ptr<Ray> ray, float &distance) {
+	float tmin = 0.0f, tmax = MAX_DIS;
+	Vector3 dir = ray->getDirection(), origin = ray->getOrigin();
+	if (abs(dir.value[0]) < EPISILON) { // if ray parallel to x plane
+		if (origin.value[0]<small.value[0] || origin.value[0]>large.value[0])
+			return false;
+	}
+	else {
+		float ood = 1.0f / dir.value[0];
+		float t1 = (small.value[0] - origin.value[0])*ood;
+		float t2 = (large.value[0] - origin.value[0])*ood;
+
+		if (t1 > t2) {
+			float temp = t1; t1 = t2; t2 = temp;
+		}
+
+		if (t1 > tmin) tmin = t1;
+		if (t2 < tmax) tmax = t2;
+
+		if (tmin < tmax) return false;
+	}
+
+	if (abs(dir.value[1]) < EPISILON) {
+		if (origin.value[1]<small.value[1] || origin.value[1]>large.value[1])
+			return false;
+	}
+	else {
+		float ood = 1.0f / dir.value[1];
+		float t1 = (small.value[1] - origin.value[1])*ood;
+		float t2 = (large.value[1] - origin.value[1])*ood;
+
+		if (t1 > t2) { 
+			float temp = t1; t1 = t2; t2 = temp; 
+		}
+
+		if (t1 > tmin) tmin = t1;
+		if (t2 < tmax) tmax = t2;
+
+		if (tmin > tmax) return false;
+	}
+
+	if (abs(dir.value[2]) < EPISILON) {
+		if (origin.value[2]<small.value[2] || origin.value[2]>large.value[2])
+			return false;
+	}
+	else {
+		float ood = 1.0f / dir.value[2];
+		float t1 = (small.value[2] - origin.value[2])*ood;
+		float t2 = (large.value[2] - origin.value[2])*ood;
+
+		if (t1 > t2) {
+			float temp = t1; t1 = t2; t2 = temp;
+		}
+
+		if (tmin > tmax) return false;
+	}
+
+	distance = (dir*tmin).magnitude();
+	return true;
+}
+
+
+// travel down until minimum
+// go back and check triangles in the current cube
+Triangle* Cube::hitCloestTriangle(const shared_ptr<Ray> ray, float &distance) {
+	float min_distance = MAX_DIS, cube_distance = MAX_DIS;
+
+	Triangle* min_Triangle = intersect(ray, &min_distance); // find the intersected triangles in the current cube size
+	min_distance = MIN(distance, min_distance);
+
+	if (left && left->hitRay(ray, cube_distance) && cube_distance < min_distance) {
+		float t_ld = MAX_DIS;
+		Triangle* t_left_triangle = left->hitCloestTriangle(ray, t_ld);
+
+		if (t_ld < min_distance) {
+			min_distance = t_ld;
+			min_Triangle = t_left_triangle;
+		}
+	}
+
+	if (right && right->hitRay(ray, cube_distance) && cube_distance < min_distance) {
+		float t_rd = MAX_DIS;
+		Triangle* t_right_triangle = right->hitCloestTriangle(ray, t_rd);
+
+		if (t_rd < min_distance) {
+			min_distance = t_rd;
+			min_Triangle = t_right_triangle;
+		}
+	}
+
+	distance = min_distance;
+
+	return min_Triangle;
+
+}
+
+
 BBox::BBox() {
 	small = Vector3(0.0f, 0.0f, 0.0f);
 	large = Vector3(1.0f, 1.0f, 1.0f);
@@ -110,4 +233,10 @@ void BBox::addMesh(Mesh mesh) {
 	LOGPRINT("Mesh is loaded successfully.");
 
 	return;
+}
+
+
+Triangle* BBox::intersect(shared_ptr<Ray> ray) {
+	float distance = MAX_DIS;
+	return box.hitCloestTriangle(ray, distance);
 }

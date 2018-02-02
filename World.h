@@ -34,4 +34,6 @@ public:
 
 	// add an object (like sphere or rectangle into the world)
 	void addObject(shared_ptr<Object> object);
+
+	Vector3 pathTracing(shared_ptr<Ray> ray);
 };

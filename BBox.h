@@ -13,6 +13,7 @@ through the bounding box to find all possible triangles to hit.
 #include "Singleton.h"
 #include "Debugging.h"
 #include "Triangle.h"
+#include "Ray.h"
 #include "Constants.h"
 
 // The whole struct like a cube divided layer by layer. Use a KD Tree
@@ -52,6 +53,12 @@ public:
 	void divideCube();
 
 	void insertTriangle(Triangle* triangle);
+
+	Triangle* intersect(shared_ptr<Ray> ray, float* distance);
+
+	bool hitRay(const shared_ptr<Ray> ray, float& distance);
+
+	Triangle* hitCloestTriangle(const shared_ptr<Ray> ray, float& distance);
 };
 
 
@@ -71,4 +78,9 @@ public:
 
 	void	addMesh(Mesh mesh); // all elements in mesh need to be triangles!
 
+	// find the closest triangle to the ray by visiting through the triangle vector
+	Triangle* hitTriangle(shared_ptr<Ray> ray);
+
+	// find the closest triangle to the ray by visiting through the bounding box
+	Triangle* intersect(shared_ptr<Ray> ray);
 };

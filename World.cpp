@@ -71,9 +71,30 @@ void World::initialize() {
 }
 
 
+// This function will trace a given ray in the bounding box bbox, it will call itself recursively.
+Vector3 World::pathTracing(shared_ptr<Ray> ray) {
+	if (ray == nullptr) return ENVIRONMENT_COLOR;
+
+	if (ray->getDepth() >= MAX_DEPTH) return ENVIRONMENT_COLOR;
+
+	Triangle* patch = bbox->intersect(ray); // complete
+	if (patch == nullptr) return ENVIRONMENT_COLOR;
+
+	Object* obj = patch->getOwner();
+
+	ray->transmit(patch, obj->getMaterial()); // material
+	
+	// if reflective, another light created
+	shared_ptr<Ray> reflectRay = nullptr;
+
+	return obj->getEmissive() + obj->getColor()*(pathTracing(ray) + pathTracing(reflectRay));
+
+}
+
+
 // This function begins path tracing
 RENDERSTATE World::renderScene() {
-	int height = camera->getHeight, width = camera->getWidth();
+	int height = camera->getHeight(), width = camera->getWidth();
 
 	for (int i = 0;i<height;i++)
 		for (int j = 0; j < width; j++) {
@@ -81,6 +102,12 @@ RENDERSTATE World::renderScene() {
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
 
 			camera->generateRay(rays, i, j);
+
+			Vector3 color(0.0f, 0.0f, 0.0f);
+			for (auto &ray : *rays) {
+				color = color + pathTracing(ray);
+			}
+			color = color * (1.0f / rays->size());
 		}
 
 	return true;

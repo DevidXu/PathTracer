@@ -16,7 +16,7 @@ using namespace std;
 
 int main()
 {
-	Debugging::getInstance()->moduleTest();
+	//Debugging::getInstance()->moduleTest();
 
 	World* world = World::getInstance();
 

@@ -51,7 +51,17 @@ void Raster::setRastertype(const char* t) {
 }
 
 
-void Raster::Render() {
+void Raster::Render(Vector3 color, int h, int w) {
+	_ASSERT(h < height && w < width);
+	for (int i = 0; i < 3; i++)
+		_ASSERT(color.value[i] <= 1.0f);
+
+	pixels[h][w].color = color;
+	return;
+}
+
+
+void Raster::Draw() {
 	bmpGraph.setHeight(height);
 	bmpGraph.setWidth(width);
 
@@ -59,9 +69,10 @@ void Raster::Render() {
 	int* temp = new int [height*width*3];
 	for (int i = 0; i < height; i++)
 		for (int j = 0; j < width; j++) {
-			temp[i*width * 3 + j * 3 + 0] = int(pixels[i][j].color[0]*255);
-			temp[i*width * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
-			temp[i*width * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
+			int actual_height = height - 1 - i; // different way of counting height in bmp graph and rendering
+			temp[actual_height*width * 3 + j * 3 + 0] = int(pixels[i][j].color[0]*255);
+			temp[actual_height*width * 3 + j * 3 + 1] = int(pixels[i][j].color[1]*255);
+			temp[actual_height*width * 3 + j * 3 + 2] = int(pixels[i][j].color[2]*255);
 		}
 	bmpGraph.generate(temp, type, RENDERIMAGE);
 	delete [] temp;

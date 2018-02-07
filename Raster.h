@@ -36,7 +36,9 @@ public:
 
 	~Raster();
 
-	void Render();
+	void Render(Vector3 color, int height, int width);
+
+	void Draw();
 
 	void setRastertype(const char* t);
 

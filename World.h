@@ -18,6 +18,7 @@ private:
 	// variables
 	shared_ptr<BBox> bbox;
 	shared_ptr<Camera> camera;
+	vector<shared_ptr<Object>> objects;
 
 	// functions
 	World();

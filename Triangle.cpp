@@ -36,6 +36,8 @@ bool Triangle::isTriangle() {
 Vector3 Triangle::normalFaceUnit() {
 	_ASSERT(isTriangle());
 
+	if (normalVector.magnitude() == 1.0f) return normalVector;
+
 	Vector3 temp0 = *vertex[2] - *vertex[0];
 	Vector3 temp1 = *vertex[2] - *vertex[1];
 
@@ -76,7 +78,9 @@ bool Triangle::hitRay(shared_ptr<Ray> ray, shared_ptr<Vector3> hitPoint) {
 	if (det > -EPISILON && det < EPISILON) return false;
 	inv_det = 1.0f / det;
 
-	Vector3 tvec = ray->getOrigin() - *vertex[0];
+	Vector3 temp_origin = ray->getOrigin();
+
+	Vector3 tvec = temp_origin - *vertex[0];
 
 	u = tvec.dot(pvec)*inv_det;
 	if (u<0.0f || u>1.0f) return false;
@@ -90,12 +94,12 @@ bool Triangle::hitRay(shared_ptr<Ray> ray, shared_ptr<Vector3> hitPoint) {
 
 	if (t <= 0.0f) return false;
 
-	*hitPoint = Vector3(ray->getOrigin() + ray->getDirection()*t);
+	*hitPoint = Vector3(temp_origin + ray->getDirection()*t);
 	return true;
 }
 
 
-void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length) {
+void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length, Vector3 center) {
 	
 	for (int i = 0; i < 3; i++) {
 		*v[i] = Vector3((*vertex[i % 3] + *vertex[(i + 1) % 3]) * 0.5f);
@@ -103,17 +107,21 @@ void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length
 		*v[i] = *v[i] + *n[i] * length;
 	}
 
-	vertex[1] = v[0]; normal[1] = n[0];
-	vertex[2] = v[2]; normal[2] = v[2];
-
 	tri[0]->setVertex(v[0], vertex[1], v[1]);
-	tri[0]->setNormal(n[0], normal[0], n[1]);
+	tri[0]->setNormal(n[0], normal[1], n[1]);
+	tri[0]->normalFaceUnit();
 
 	tri[1]->setVertex(v[0], v[1], v[2]);
 	tri[1]->setNormal(n[0], n[1], n[2]);
+	tri[1]->normalFaceUnit();
 
 	tri[2]->setVertex(v[1], vertex[2], v[2]);
 	tri[2]->setNormal(n[1], normal[2], n[2]);
+	tri[2]->normalFaceUnit();
+
+	vertex[1] = v[0]; normal[1] = n[0];
+	vertex[2] = v[2]; normal[2] = n[2];
+	normalFaceUnit();
 
 	return;
 }

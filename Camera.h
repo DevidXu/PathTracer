@@ -28,7 +28,7 @@ public:
 	int getHeight() { return raster->getHeight(); }
 	Vector3 getPosition() { return position; }
 
-	void Render();
+	void Render(Vector3 color, int height, int width);
 
 	void drawScene();
 

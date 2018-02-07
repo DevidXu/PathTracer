@@ -20,6 +20,8 @@ void Cube::setCube(Vector3 s, Vector3 l) {
 
 
 void Cube::divideCube() {
+	if (left != nullptr) return;
+
 	Vector3 mid = (small + large)*0.5;
 	
 	int dimension = int(lm);
@@ -64,7 +66,7 @@ void Cube::insertTriangle(Triangle* triangle) {
 
 
 Triangle* Cube::intersect(shared_ptr<Ray> ray, float* dis) {
-	float distance = 0.0f;
+	float distance = MAX_DIS;
 	Triangle* hTriangle = nullptr;
 
 	for (auto &ptr : triangle_ptr) {
@@ -87,7 +89,18 @@ Triangle* Cube::intersect(shared_ptr<Ray> ray, float* dis) {
 // detect whether the ray will cross the cube; if cross, change the distance correspondingly
 bool Cube::hitRay(shared_ptr<Ray> ray, float &distance) {
 	float tmin = 0.0f, tmax = MAX_DIS;
+
 	Vector3 dir = ray->getDirection(), origin = ray->getOrigin();
+
+	bool inside = true;
+	for (int i = 0; i < 3; i++) {
+		if (origin.value[i]<small.value[i] || origin.value[i]>large.value[i]) inside = false;
+	}
+	if (inside) {
+		distance = 0.0f;
+		return true;
+	}
+
 	if (abs(dir.value[0]) < EPISILON) { // if ray parallel to x plane
 		if (origin.value[0]<small.value[0] || origin.value[0]>large.value[0])
 			return false;
@@ -205,14 +218,9 @@ BBox::~BBox() {
 
 void BBox::addTriangle(Triangle* triangle) {
 	// ensure triangle is smaller than the box
-	try {
-		for (int i = 0; i < 3; i++)
-			if (!triangle->smallerThan(large[i], i) || !triangle->largerThan(small[i], i)) 
-				throw("Triangle is not in the box domain.");
-	}
-	catch (exception e) {
-		LOGPRINT("Meet error when adding triangles to the bounding box");
-		LOGPRINT(e.what());
+	for (int i = 0; i < 3; i++) {
+		if (!triangle->smallerThan(large[i], i) || !triangle->largerThan(small[i], i))
+			throw("Triangle is not in the box domain.");
 	}
 
 	box.insertTriangle(triangle);
@@ -236,7 +244,9 @@ void BBox::addMesh(Mesh mesh) {
 }
 
 
-Triangle* BBox::intersect(shared_ptr<Ray> ray) {
-	float distance = MAX_DIS;
-	return box.hitCloestTriangle(ray, distance);
+Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
+	ray->incDepth();
+	Triangle* t = box.hitCloestTriangle(ray, distance);
+
+	return t;
 }

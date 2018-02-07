@@ -1,10 +1,10 @@
 #include "Camera.h"
-
+#include <time.h>
 
 Camera::Camera() {
 	raster = make_shared<Raster>(HEIGHT, WIDTH); // initialize the rasetr (each pixel)
 
-	angleView = Vector2(ANGLEVIEWWIDTH, ANGLEVIEWHEIGHT);
+	angleView = Vector2(ANGLEVIEWWIDTH*PIDEGREE, ANGLEVIEWHEIGHT*PIDEGREE);
 };
 
 Camera::Camera(Vector3 m_pos, Vector3 m_towards) :
@@ -12,18 +12,18 @@ Camera::Camera(Vector3 m_pos, Vector3 m_towards) :
 
 	raster = make_shared<Raster>(HEIGHT, WIDTH); // initialize the rasetr (each pixel)
 
-	angleView = Vector2(ANGLEVIEWWIDTH*0.17444f, ANGLEVIEWHEIGHT*0.17444f);
+	angleView = Vector2(ANGLEVIEWWIDTH*PIDEGREE, ANGLEVIEWHEIGHT*PIDEGREE);
 };
 
 
-void Camera::Render() {
-
+void Camera::Render(Vector3 color, int height, int width) {
+	raster->Render(color, height, width);
 	return;
 }
 
 
 void Camera::drawScene() {
-	raster->Render();
+	raster->Draw();
 
 	return;
 }
@@ -58,7 +58,7 @@ Vector3 Camera::rotate(Vector3 eulerAngle) {
 	}
 	Vector2 vec(x, y);
 	vec = vec.rotate(pitch);
-	temp = Vector3(vec[0]*towards[0]/x, vec[0]*towards[1]/x, vec[1]);
+	temp = Vector3(vec[0]*temp.value[0]/x, vec[0]*temp.value[1]/x, vec[1]);
 
 	return temp;
 }
@@ -73,18 +73,18 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 	float screen_height = tan(angleView.value[1] / 2) * 2;
 
 	// divide the pixel into four parts and sample averagely in each part.
-	srand(0);
-	for (int row=0;row<2;row++)
-		for (int column =0;column<2;column++)
-			for (int i = 0; i < num/4; i++)
-			{
+	srand((unsigned int)time(NULL));
+
+	for (int i = 0; i < num / 4; i++)
+		for (int row = 0; row<2; row++)
+			for (int column = 0; column<2; column++) {
 				// sample methods
-				shared_ptr<Ray> ray_ptr = rays->at(i);
+				shared_ptr<Ray> ray_ptr = rays->at(i*4+row*2+column);
 				float pixel_width = float((rand() + 1) / (RAND_MAX + 2.0) + column * 0.5f);	// ~U(0,1)
 				float pixel_height = float((rand() + 1) / (RAND_MAX + 2.0) + row * 0.5f);		// ~U(0,1)
 
-				float yaw = screen_width * (0.5f - w / getWidth() + pixel_width / getWidth());
-				float pitch = screen_height * (h / getHeight() + pixel_height / getHeight() - 0.5f);
+				float yaw = screen_width * (0.5f - w*1.0f / getWidth() + pixel_width / getWidth());
+				float pitch = screen_height * (0.5f - h*1.0f / getHeight() + pixel_height / getHeight());
 
 				try {
 					Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();

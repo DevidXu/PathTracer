@@ -1,6 +1,7 @@
 #pragma pack(2)// a must; or else the answer of sizeof is incorrect  
 
 #include "BMPGraph.h"
+#include <stdlib.h>
 
 typedef unsigned char  BYTE;
 typedef unsigned short WORD;

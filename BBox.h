@@ -78,9 +78,6 @@ public:
 
 	void	addMesh(Mesh mesh); // all elements in mesh need to be triangles!
 
-	// find the closest triangle to the ray by visiting through the triangle vector
-	Triangle* hitTriangle(shared_ptr<Ray> ray);
-
 	// find the closest triangle to the ray by visiting through the bounding box
-	Triangle* intersect(shared_ptr<Ray> ray);
+	Triangle* intersect(shared_ptr<Ray> ray, float &distance);
 };

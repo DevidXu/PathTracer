@@ -30,7 +30,6 @@ public:
 		vertex[1] = v1;
 		vertex[2] = v2;
 		owner = m;
-
 	};
 
 	Triangle(Vector3* v0, Vector3* v1, Vector3* v2,
@@ -66,6 +65,8 @@ public:
 
 	Object* getOwner() { return owner; }
 
+	Vector3 getNormal() { return normalVector; }
+
 	float averageSideLength();
 
 	Vector3 normalFaceUnit(); // return the normal vector prependicular to the plane
@@ -81,7 +82,13 @@ public:
 	length of the three sides of the original triangle. For an equal-length triangle we expect
 	the generated triangles are all equal-length triangles.
 	*/
-	void tessellate(Triangle** tri, Vector3** v, Vector3** n, float length); // expand one triangle to three
+	void tessellate(
+		Triangle** tri, 
+		Vector3** v, 
+		Vector3** n, 
+		float length, 
+		Vector3 center = Vector3(0.0f, 0.0f, 0.0f)
+	); // expand one triangle to three
 };
 
 typedef std::vector<Triangle*> Mesh;

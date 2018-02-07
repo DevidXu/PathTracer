@@ -10,9 +10,12 @@ These variables cannot be changed
 #define HEIGHT		128
 #define WIDTH		128
 
-#define BOX_LENGTH	4.0
-#define BOX_WIDTH	5.0
-#define BOX_HEIGHT	4.0
+#define BOX_LENGTH	5.0  // x max
+#define BOX_WIDTH	4.0  // y max
+#define BOX_HEIGHT	4.0  // z max
+
+#define CAMERA_POSITION Vector3(5.0f, 2.0f, 1.5f)
+#define CAMERA_FORWARD Vector3(-1.0f, 0.0f, 0.0f)
 
 #define ANGLEVIEWWIDTH 90
 #define ANGLEVIEWHEIGHT 90
@@ -23,6 +26,16 @@ These variables cannot be changed
 
 #define ENVIRONMENT_COLOR Vector3(0.0f, 0.0f, 0.0f)
 
-#define MAX_DIS 1000000.0f
+#define GLASS_REFRACTIVITY 1.5f
 
+#define MAX_DIS 1000000.0f
 #define EPISILON 0.00001f
+
+#define PIDEGREE 0.017444f
+#define PI 3.1415926f
+
+
+// DEBUG DEFINES
+
+//#define TESSELLATE
+//#define GLOBAL

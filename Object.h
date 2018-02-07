@@ -12,14 +12,16 @@ it should support tesselation.
 
 class Object {
 private:
-	shared_ptr<Shape> shape;
-	shared_ptr<Material> material;
+	shared_ptr<Shape>		shape;
+	shared_ptr<Material>	material;
 
 	Vector3 emissive, color;
 
 public:
-	Vector3 getEmissive() { return emissive; }
-	Vector3 getColor() { return color; }
+	Vector3 setEmissive(Vector3 e)	{ emissive = e; }
+	Vector3 setColor(Vector3 c)		{ color = c; }
+	Vector3 getEmissive()			{ return emissive; }
+	Vector3 getColor()				{ return color; }
 
 
 	Object() {
@@ -31,15 +33,25 @@ public:
 
 	
 	Object(shared_ptr<Shape> m_shape) :shape(m_shape) {
-		//shape->setOwner(this);
+		shape->setOwner(this);
 	};
 
 	
 	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material) 
 		:shape(m_shape), material(m_material) {
-		//shape->setOwner(this);
+		shape->setOwner(this);
 	};
 	
+
+	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material, Vector3 c, Vector3 e) {
+		shape = m_shape;
+		material = m_material;
+		color = c;
+		emissive = e;
+
+		shape->setOwner(this);
+	}
+
 
 	Mesh getMesh() {
 		return shape->getMesh();
@@ -50,6 +62,10 @@ public:
 
 	
 	void tessellate(float iterations) {
+#ifndef TESSELLATE
+		return;
+#endif
+
 		shape->tessellate(iterations);
 
 		return;

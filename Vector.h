@@ -97,6 +97,11 @@ public:
 		return temp;
 	}
 
+	Vector2 operator/(float k) {
+		_ASSERT(k != 0.0f);
+		return operator*(1.0f / k);
+	}
+
 	Vector2 rotate(float angle) {
 		Vector2 temp0(cos(angle), -sin(angle)), temp1(sin(angle), cos(angle));
 		Vector2 result(this->dot(temp0), this->dot(temp1));
@@ -190,6 +195,11 @@ public:
 		for (int i = 0; i < 3; i++)
 			temp.value[i] = (*this)[i] * k;
 		return temp;
+	}
+
+	Vector3 operator/(float k) {
+		_ASSERT(k != 0.0f);
+		return operator*(1.0f / k);
 	}
 
 	Vector3 normalize() {
@@ -296,6 +306,11 @@ public:
 		for (int i = 0; i < 4; i++)
 			temp.value[i] = (*this)[i] * k;
 		return temp;
+	}
+
+	Vector4 operator/(float k) {
+		_ASSERT(k != 0.0f);
+		return operator*(1.0f / k);
 	}
 
 	virtual float operator*(const Vector v) {

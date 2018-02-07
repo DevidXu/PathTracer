@@ -249,6 +249,8 @@ void Sphere::tessellate(float iteration) {
 			Vector3 *v[3], *n[3];
 			for (int k = 0; k < 3; k++) {
 				tri[k] = new Triangle();
+				tri[k]->setOwner((Object*)this);
+
 				v[k] = new Vector3();
 				n[k] = new Vector3();
 				vertexs.push_back(v[k]);
@@ -257,7 +259,7 @@ void Sphere::tessellate(float iteration) {
 			}
 
 			float len = radius - sqrt(pow(radius, 2) - pow(triangle->averageSideLength() / 2, 2));
-			triangle->tessellate(tri, v, n, len);
+			triangle->tessellate(tri, v, n, len, center);
 		}
 	}
 

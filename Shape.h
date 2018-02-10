@@ -42,7 +42,7 @@ public:
 
 	// This defines how to add more vertexs to the model; the iteration means iteration number
 	// and the degree control the mutation degree of the model
-	virtual void tessellate(float iterations) {};
+	virtual void tessellate(float iterations, Object* obj) {};
 };
 
 
@@ -56,7 +56,7 @@ public:
 
 	Rectangle(Vector3 small, Vector3 big);
 
-	virtual void tessellate(float iterations, float degree);
+	virtual void tessellate(float iterations, Object* obj);
 };
 
 
@@ -72,5 +72,5 @@ public:
 
 	Sphere(Vector3 m_center, float m_radius);
 
-	virtual void tessellate(float iteration);
+	virtual void tessellate(float iteration, Object* obj);
 };

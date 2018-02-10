@@ -48,10 +48,10 @@ void World::initialize() {
 				1.0f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY),
-			Vector3(1.0f, 1.0f, 1.0f),
+			Vector3(0.1f, 0.1f, 0.1f),
 			Vector3(0.0f, 0.0f, 0.0f)
 			);
-		
+
 		obj1->tessellate(2);
 
 		// the rectangle of normal material
@@ -61,14 +61,14 @@ void World::initialize() {
 				Vector3(2.0f, 3.5f, 2.0f)
 				),
 			make_shared<Diff>(),
-			Vector3(1.0f, 0.0f, 0.0f),
+			Vector3(0.6f, 0.0f, 0.0f),
 			Vector3(0.0f, 0.0f, 0.0f)
 			);
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(2.0f, 1.5f, 3.9f),
-				Vector3(3.0f, 2.5f, 4.0f)
+				Vector3(1.0f, 1.0f, 3.8f),
+				Vector3(4.0f, 3.0f, 4.0f)
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
@@ -86,7 +86,7 @@ void World::initialize() {
 		if (box == nullptr || obj1 == nullptr || obj2 == nullptr || light == nullptr)
 			throw("No pointer pointing to the shape created before.");
 		addObject(box);
-		addObject(obj1);
+		//addObject(obj1);
 		//addObject(obj2);
 		addObject(light);
 	}
@@ -103,7 +103,7 @@ void World::initialize() {
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	if (ray == nullptr) return ENVIRONMENT_COLOR;
 
-	if (ray->getDepth() >= MAX_DEPTH) return ENVIRONMENT_COLOR;
+	if (ray->getDepth() > MAX_DEPTH) return ENVIRONMENT_COLOR;
 
 	float distance = MAX_DIS;
 	Triangle* patch = bbox->intersect(ray, distance); // find the triangle face that intersect with the ray
@@ -119,7 +119,8 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
     ray->transmit(patch, &hitPoint, obj->getMaterial(), refractRay);		// material decide the outward direction
 #endif
 
-	if (obj->getColor().magnitude() == 0.0f) return obj->getEmissive();		// if meet the light source
+	if (obj->getColor().magnitude() == 0.0f) 
+		return obj->getEmissive();		// if meet the light source
 
 #ifndef GLOBAL
 	return obj->getColor();
@@ -129,7 +130,9 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	if (refractRay) rate = 0.5f;
 	Vector3 rayColor = (pathTracing(ray) + pathTracing(refractRay))*rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
 
-	return obj->getEmissive() + obj->getColor()*rayColor;
+	for (int i = 0; i < 3; i++) rayColor.value[i] *= obj->getColor().value[i];
+
+	return obj->getEmissive() + rayColor;
 
 }
 

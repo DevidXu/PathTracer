@@ -117,7 +117,7 @@ bool Cube::hitRay(shared_ptr<Ray> ray, float &distance) {
 		if (t1 > tmin) tmin = t1;
 		if (t2 < tmax) tmax = t2;
 
-		if (tmin < tmax) return false;
+		if (tmin > tmax) return false;
 	}
 
 	if (abs(dir.value[1]) < EPISILON) {

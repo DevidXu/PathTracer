@@ -20,7 +20,7 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 90
 #define ANGLEVIEWHEIGHT 90
 
-#define SAMPLE_NUM 4
+#define SAMPLE_NUM 20
 
 #define MAX_DEPTH 4
 
@@ -38,4 +38,4 @@ These variables cannot be changed
 // DEBUG DEFINES
 
 //#define TESSELLATE
-//#define GLOBAL
+#define GLOBAL

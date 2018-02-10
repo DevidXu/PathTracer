@@ -26,7 +26,7 @@ public:
 
 	Object() {
 		shape = make_shared<Shape>();
-		//shape->setOwner(this);
+		shape->setOwner(this);
 
 		material = make_shared<Material>();
 	}
@@ -53,6 +53,8 @@ public:
 	}
 
 
+	shared_ptr<Shape> getShape() { return shape; }
+
 	Mesh getMesh() {
 		return shape->getMesh();
 	}
@@ -66,7 +68,7 @@ public:
 		return;
 #endif
 
-		shape->tessellate(iterations);
+		shape->tessellate(iterations, this);
 
 		return;
 	};

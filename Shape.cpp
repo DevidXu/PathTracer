@@ -184,7 +184,7 @@ Rectangle::Rectangle(Vector3 small, Vector3 big) {
 }
 
 
-void Rectangle::tessellate(float iteration, float degree) {
+void Rectangle::tessellate(float iteration, Object* obj) {
 	// Rectangle has no need to tessellate here
 	return;
 }
@@ -198,7 +198,7 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 		LOGPRINT("Wrong radius to initialize the sphere");
 	}
 
-	setCenter(m_center);
+	setCenter(Vector3(0.0f,0.0f,0.0f));
 	radius = m_radius;
 
 	Vector3* v[6];
@@ -237,7 +237,7 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 }
 
 
-void Sphere::tessellate(float iteration) {
+void Sphere::tessellate(float iteration, Object* obj) {
 	for (int num = 0; num < iteration; num++) {
 		int size = (int)meshes.size();
 
@@ -249,7 +249,7 @@ void Sphere::tessellate(float iteration) {
 			Vector3 *v[3], *n[3];
 			for (int k = 0; k < 3; k++) {
 				tri[k] = new Triangle();
-				tri[k]->setOwner((Object*)this);
+				tri[k]->setOwner(obj);
 
 				v[k] = new Vector3();
 				n[k] = new Vector3();

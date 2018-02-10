@@ -30,7 +30,8 @@ void Diff::transmit(
 		if (normal.value[2] < 0.0f) theta2 = 0.0f - theta2;
 	}
 
-	theta1 += rand() / (RAND_MAX + 1.0f)*PIDEGREE*180.0f;
+	// hemisphere -> 360.0 and 90.0
+	theta1 += rand() / (RAND_MAX + 1.0f)*PIDEGREE*360.0f;
 	theta2 += rand() / (RAND_MAX + 1.0f)*PIDEGREE*90.0f;
 
 	Vector3 direction(cos(theta1)*cos(theta2), sin(theta1)*cos(theta2), sin(theta2));

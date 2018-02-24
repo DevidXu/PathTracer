@@ -87,7 +87,7 @@ void World::initialize() {
 			throw("No pointer pointing to the shape created before.");
 		addObject(box);
 		//addObject(obj1);
-		//addObject(obj2);
+		addObject(obj2);
 		addObject(light);
 	}
 	catch (exception e) {
@@ -144,6 +144,10 @@ RENDERSTATE World::renderScene() {
 	float progress = 0.0f, last_progress = 0.0f;
 	int sum_pixels = height * width;
 
+	// calculate the time needed
+	time_t start, current;
+	start = time(NULL);
+
 	system("cls");
 	cout << "Rendering Progress: 0%" << endl;
 
@@ -166,12 +170,15 @@ RENDERSTATE World::renderScene() {
 
 			camera->Render(color, i, j);
 
-			// show the progress
+			// print the progress
 			progress = (i*width + j)*100.0f / sum_pixels;
 			if (progress - last_progress > 1) {
 				last_progress = progress;
 				system("cls");
-				cout << "Rendering Progress: " << setprecision(3) << progress << "%";
+				cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
+				current = time(NULL);
+				int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
+				cout << "Estimated left time: " << esti_time << "s" << endl;
 			}
 
 		}

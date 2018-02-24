@@ -7,8 +7,8 @@ These variables cannot be changed
 
 #define UNCHANGE	1
 
-#define HEIGHT		128
-#define WIDTH		128
+#define HEIGHT		512
+#define WIDTH		512
 
 #define BOX_LENGTH	5.0  // x max
 #define BOX_WIDTH	4.0  // y max
@@ -17,12 +17,12 @@ These variables cannot be changed
 #define CAMERA_POSITION Vector3(5.0f, 2.0f, 1.5f)
 #define CAMERA_FORWARD Vector3(-1.0f, 0.0f, 0.0f)
 
-#define ANGLEVIEWWIDTH 90
-#define ANGLEVIEWHEIGHT 90
+#define ANGLEVIEWWIDTH 120
+#define ANGLEVIEWHEIGHT 120
 
-#define SAMPLE_NUM 248
+#define SAMPLE_NUM 128
 
-#define MAX_DEPTH 8
+#define MAX_DEPTH 5
 
 #define ENVIRONMENT_COLOR Vector3(0.1f, 0.1f, 0.1f)
 

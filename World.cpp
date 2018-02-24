@@ -72,7 +72,7 @@ void World::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(1.0f, 1.0f, 1.0f)
+			Vector3(20.0f, 20.0f, 20.0f)
 			);
 	}
 	catch (exception e) {
@@ -99,11 +99,14 @@ void World::initialize() {
 }
 
 
+float MAX(float a, float b) {
+	float r = a > b ? a : b;
+	return r;
+}
+
 // This function will trace a given ray in the bounding box bbox, it will call itself recursively.
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	if (ray == nullptr) return ENVIRONMENT_COLOR;
-
-	if (ray->getDepth() > MAX_DEPTH) return ENVIRONMENT_COLOR;
 
 	float distance = MAX_DIS;
 	Triangle* patch = bbox->intersect(ray, distance); // find the triangle face that intersect with the ray
@@ -112,6 +115,14 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	Object* obj = patch->getOwner();
 
 	Vector3 hitPoint = ray->getOrigin() + ray->getDirection()*distance;
+
+	Vector3 color = obj->getColor();
+	if (ray->getDepth() > MAX_DEPTH) {
+		float p = MAX(MAX(color.value[0], color.value[1]), color.value[2]);
+		if (rand()/(RAND_MAX+1.0f)>p)
+			return ENVIRONMENT_COLOR;
+		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
+	}
 
 	shared_ptr<Ray> refractRay = nullptr;
 
@@ -130,7 +141,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	if (refractRay) rate = 0.5f;
 	Vector3 rayColor = (pathTracing(ray) + pathTracing(refractRay))*rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
 
-	for (int i = 0; i < 3; i++) rayColor.value[i] *= obj->getColor().value[i];
+	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
 
 	return obj->getEmissive() + rayColor;
 

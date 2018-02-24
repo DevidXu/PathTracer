@@ -7,8 +7,8 @@ These variables cannot be changed
 
 #define UNCHANGE	1
 
-#define HEIGHT		64
-#define WIDTH		64
+#define HEIGHT		128
+#define WIDTH		128
 
 #define BOX_LENGTH	5.0  // x max
 #define BOX_WIDTH	4.0  // y max
@@ -20,7 +20,7 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 120
 #define ANGLEVIEWHEIGHT 120
 
-#define SAMPLE_NUM 16
+#define SAMPLE_NUM 40
 
 #define MAX_DEPTH 5
 

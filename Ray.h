@@ -14,9 +14,10 @@ class Ray {
 private:
 	Vector3 origin;		// origin position of ray in each iteration
 	Vector3 direction;	// the current direction ray travels along
+	
 	float intensity;	// the intensity of ray (1.0 initial value)
 	int depth;			// the number of iterations experience by a ray
-	vector<Vector3> positions;
+	vector<Vector3> positions, directions;	// used to monitor the direction of the ray
 
 public:
 	Ray() {
@@ -25,8 +26,8 @@ public:
 	};
 	~Ray() {};
 
-	Ray(Vector3 o, Vector3 d, float inten = 1.0f) :origin(o), direction(d) {
-		intensity = inten;
+	Ray(Vector3 o, Vector3 d, float in = 1.0f) :origin(o), direction(d) {
+		intensity = in;
 		depth = 0;
 	};
 
@@ -40,11 +41,9 @@ public:
 
 	void incDepth() { depth += 1; }
 
-	void setOrigin(Vector3 o)		{
-		origin = o;
-	}
+	void setOrigin(Vector3 o);
 
-	void setDirection(Vector3 d)	{ direction = d; }
+	void setDirection(Vector3 d);
 
 	void setIntensity(float i) {
 		_ASSERT(i <= 1.0f);

@@ -59,6 +59,10 @@ public:
 		normal[2] = n2;
 	}
 
+	void setNormalVector(Vector3 normalUnit) {
+		normalVector = normalUnit;
+	}
+
 	void setOwner(Object* m) {
 		owner = m;
 	}

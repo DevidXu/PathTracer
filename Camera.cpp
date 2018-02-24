@@ -1,5 +1,4 @@
 #include "Camera.h"
-#include <time.h>
 
 Camera::Camera() {
 	raster = make_shared<Raster>(HEIGHT, WIDTH); // initialize the rasetr (each pixel)
@@ -71,9 +70,6 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 	// calculate the size of the screen to sample evenly
 	float screen_width = tan(angleView.value[0] / 2) * 2;
 	float screen_height = tan(angleView.value[1] / 2) * 2;
-
-	// divide the pixel into four parts and sample averagely in each part.
-	srand((unsigned int)time(NULL));
 
 	for (int i = 0; i < num / 4; i++)
 		for (int row = 0; row<2; row++)

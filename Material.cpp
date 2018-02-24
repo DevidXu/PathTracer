@@ -1,5 +1,5 @@
 #include "Material.h"
-#include <time.h>
+
 
 // calculate the transmited ray for diffuse material
 void Diff::transmit(
@@ -9,32 +9,20 @@ void Diff::transmit(
 	shared_ptr<Ray> refractRay
 ) {
 	// calculate a point randomly on the hemisphere and use as outward direction of ray
-	srand((unsigned int) time(NULL));
 
 	Vector3 normal = triangle->getNormal();
 	float theta1, theta2;
-	if (normal.value[0] == 0.0f) {
-		if (normal.value[1] > 0.0f) theta1 = PI;
-		else theta1 = 0.0f;
-	}
-	else {
-		theta1 = atan(normal.value[1] / normal.value[0]);
-		if (normal.value[1] < 0.0f) theta1 += PI;
-	}
 
-	if (normal.value[0] == 0.0f && normal.value[1] == 0.0f)
-		theta2 = normal.value[2] > 0.0f ? PI / 2 : -PI / 2;
-	else {
-		float length = sqrt(normal.value[0] * normal.value[0] + normal.value[1] * normal.value[1]);
-		theta2 = atan(length / normal.value[2]);
-		if (normal.value[2] < 0.0f) theta2 = 0.0f - theta2;
+	bool sameHemis = true;	// used to judge the random reflected ray and in-ray on the different hemisphere
+	Vector3 direction(0.0f, 0.0f, 0.0f);
+	float unit = ray->getDirection().dot(normal) > 0 ? -1.0f : 1.0f; // used to judge whether normal on the same face with in-ray
+
+	while (sameHemis) {
+		theta1 = rand() / (RAND_MAX + 1.0f)*PIDEGREE*360.0f;
+		theta2 = (rand() / (RAND_MAX + 1.0f)-0.5f)*PIDEGREE*180.0f;
+		direction = Vector3(cos(theta1)*cos(theta2), sin(theta1)*cos(theta2), sin(theta2));
+		if (direction.dot(normal*unit) > EPISILON) sameHemis = false;
 	}
-
-	// hemisphere -> 360.0 and 90.0
-	theta1 += rand() / (RAND_MAX + 1.0f)*PIDEGREE*360.0f;
-	theta2 += rand() / (RAND_MAX + 1.0f)*PIDEGREE*90.0f;
-
-	Vector3 direction(cos(theta1)*cos(theta2), sin(theta1)*cos(theta2), sin(theta2));
 
 	ray->setDirection(direction);
 	ray->setOrigin(*hitPoint);

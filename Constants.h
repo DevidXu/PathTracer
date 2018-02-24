@@ -20,11 +20,11 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 90
 #define ANGLEVIEWHEIGHT 90
 
-#define SAMPLE_NUM 20
+#define SAMPLE_NUM 248
 
-#define MAX_DEPTH 4
+#define MAX_DEPTH 8
 
-#define ENVIRONMENT_COLOR Vector3(0.0f, 0.0f, 0.0f)
+#define ENVIRONMENT_COLOR Vector3(0.1f, 0.1f, 0.1f)
 
 #define GLASS_REFRACTIVITY 1.5f
 

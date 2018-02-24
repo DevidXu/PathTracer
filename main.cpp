@@ -12,12 +12,13 @@ Writer: Xu Dewei
 #include "Constants.h"
 #include "World.h"
 #include "Shape.h"
+#include <time.h>
 using namespace std;
 
 int main()
 {
 	//Debugging::getInstance()->moduleTest();
-
+	srand((unsigned int)time(NULL));
 	World* world = World::getInstance();
 
 	// intialize the bounding box and add two rectangles.s

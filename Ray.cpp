@@ -1,12 +1,23 @@
 #include "Ray.h"
 #include "Material.h"
 
-void Ray::initialize(Vector3 o, Vector3 d) {
+
+void Ray::setOrigin(Vector3 o) {
 	origin = o;
+	positions.push_back(o);
+}
+
+
+void Ray::setDirection(Vector3 d) {
 	direction = d;
+	directions.push_back(d);
+}
+
+void Ray::initialize(Vector3 o, Vector3 d) {
+	setOrigin(o);
+	setDirection(d);
 	depth = 0;
 	intensity = 1.0f;
-	positions.push_back(origin);
 	return;
 }
 
@@ -18,9 +29,6 @@ void Ray::transmit(
 	shared_ptr<Ray> refractRay
 ) {
 	// decide the returned ray(fix on current ray) according to the material kind
-	positions.push_back(*hitPoint);
-
-	//shared_ptr<Ray>	ray(this);
 	material->transmit(triangle, hitPoint, this, refractRay);
 
 	return;

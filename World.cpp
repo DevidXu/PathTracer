@@ -67,8 +67,8 @@ void World::initialize() {
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(1.0f, 1.0f, 3.8f),
-				Vector3(2.5f, 3.0f, 4.0f)
+				Vector3(1.0f, 1.25f, 3.99f),
+				Vector3(2.5f, 2.75f, 4.0f)
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),

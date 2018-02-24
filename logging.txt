@@ -1,0 +1,9 @@
+This is the realization of a path tracer!
+Mesh is loaded successfully.
+Mesh is loaded successfully.
+Mesh is loaded successfully.
+Begin to write the image
+Finish rendering the image. Check the path for result
+
+D:\Microsoft Visual Studio\Projects\PathTracer\PathTracer./image.bmp
+Path tracer is completed successfully!

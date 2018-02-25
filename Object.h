@@ -16,12 +16,14 @@ private:
 	shared_ptr<Material>	material;
 
 	Vector3 emissive, color;
+	string name;
 
 public:
 	Vector3 setEmissive(Vector3 e)	{ emissive = e; }
 	Vector3 setColor(Vector3 c)		{ color = c; }
 	Vector3 getEmissive()			{ return emissive; }
 	Vector3 getColor()				{ return color; }
+	string	getName()				{ return name; }
 
 
 	Object() {
@@ -43,11 +45,12 @@ public:
 	};
 	
 
-	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material, Vector3 c, Vector3 e) {
+	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material, Vector3 c, Vector3 e, string n = "Object") {
 		shape = m_shape;
 		material = m_material;
 		color = c;
 		emissive = e;
+		name = n;
 
 		shape->setOwner(this);
 	}

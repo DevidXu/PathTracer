@@ -245,6 +245,8 @@ void BBox::addMesh(Mesh mesh) {
 
 
 Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
+	if (ray == nullptr) return nullptr;
+
 	ray->incDepth();
 	Triangle* t = box.hitCloestTriangle(ray, distance);
 

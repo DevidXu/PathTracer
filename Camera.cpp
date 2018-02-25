@@ -79,13 +79,14 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 				float pixel_width = float((rand() + 1) / (RAND_MAX + 2.0) + column * 0.5f);	// ~U(0,1)
 				float pixel_height = float((rand() + 1) / (RAND_MAX + 2.0) + row * 0.5f);		// ~U(0,1)
 				
-																								/*
-				float yaw = screen_width * (0.5f - w*1.0f / getWidth() + pixel_width / getWidth());
-				float pitch = screen_height * (0.5f - h*1.0f / getHeight() + pixel_height / getHeight());
-				*/
+				float ray_width = screen_width * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
+				float ray_height = screen_height * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
+				float yaw = atan(ray_width);
+				float pitch = atan(ray_height/sqrt(1.0f+pow(ray_width,2)));
+				/*
 				float yaw = angleView.value[0] * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
 				float pitch = angleView.value[1] * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
-
+				*/
 				try {
 					Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
 					ray_ptr->setOrigin(position);

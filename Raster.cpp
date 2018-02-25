@@ -52,6 +52,7 @@ void Raster::setRastertype(const char* t) {
 
 
 void Raster::Render(Vector3 color, int h, int w) {
+	// color has been set <1.0f before
 	_ASSERT(h < height && w < width);
 	for (int i = 0; i < 3; i++)
 		_ASSERT(color.value[i] <= 1.0f);

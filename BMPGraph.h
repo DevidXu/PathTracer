@@ -4,8 +4,14 @@
 // graphes of different postfix like JPG, ttp as you like.
 
 #include "Debugging.h"
+#include "Constants.h"
 
 enum RasterType { RGB, GRAY };
+
+enum POSTPROCESS {DENOISE, HDR, EMPTY};
+
+// parameters for DENOISE
+#define Sigmma 100
 
 class BMPGraph {
 private:
@@ -16,4 +22,10 @@ public:
 	void setHeight(int h)	{ height = h; }
 
 	void generate(int* begin, RasterType mark, const char* name);
+
+	void postProcess(int* begin, POSTPROCESS pProcess);
 };
+
+
+void denoiseProcess(int* begin);
+void HDRProcess(int* begin);

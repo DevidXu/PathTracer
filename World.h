@@ -11,6 +11,7 @@ This class is the main class after we start the program. It will construct the w
 #include "Ray.h"
 #include "Constants.h"
 #include <memory>
+#include <sstream>
 #define RENDERSTATE bool
 
 class World :public Singleton<World> {

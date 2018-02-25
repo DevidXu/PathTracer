@@ -100,6 +100,7 @@ void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 	_ASSERT(width != 0);
 
 	try {
+		//postProcess(begin, DENOISE);
 		saveBitmap(name, mark, width, height, begin);
 	}
 	catch (exception e) {
@@ -107,4 +108,63 @@ void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 	}
 
 	return;
+}
+
+
+void BMPGraph::postProcess(int* begin, POSTPROCESS pProcess) {
+	switch (pProcess) {
+	case DENOISE:
+		denoiseProcess(begin); break;
+	case HDR:
+		HDRProcess(begin); break;
+	default:
+		LOGPRINT("No such post process defined!");
+		break;
+	}
+}
+
+
+void denoiseProcess(int* begin) {
+	// calculate the size of chosen area to denoise
+	int size = int(ceil(log(HEIGHT < WIDTH ? HEIGHT : WIDTH)) - 1);
+	size = size / 2 * 2 + 1; // ensure it is odd
+
+	for (int i = size / 2; i < HEIGHT - size / 2; i++)
+		for (int j = size / 2; j < WIDTH - size / 2; j++) {
+			int index = i * WIDTH * 3 + j * 3;
+			
+			// sum of pixels, sum of squares, mean, variance, denoise parameters
+			double sum[3], sum2[3], mean[3], var[3], dk[3];
+			
+			// initialize all
+			for (int k = 0; k < 3; k++) {
+				sum[k] = 0.0;
+				sum2[k] = 0.0;
+				mean[k] = 0.0;
+				var[k] = 0.0;
+				dk[k] = 0.0;
+			}
+
+			for (int m = -size / 2; m <= size / 2; m++)
+				for (int n = -size / 2; n <= size / 2; n++) {
+					for (int k = 0; k < 3; k++) {
+						sum[k] += begin[index+k+m*WIDTH*3+n*3];
+						sum2[k] += pow(begin[index+k+m*WIDTH*3+n*3], 2);
+					}
+				}
+
+			int area = size * size;
+			for (int k = 0; k < 3; k++) {
+				mean[k] = sum[k] / area;
+				var[k] = (sum2[k] - pow(sum[k], 2) / area) / area;
+				dk[k] = var[k] / (var[k] + Sigmma);
+				begin[index + k] = int(floor((1 - dk[k])*mean[k] + dk[k] * begin[index + k]));
+			}
+
+		}
+}
+
+
+void HDRProcess(int* begin) {
+	LOGPRINT("HDR is not supported for single image process");
 }

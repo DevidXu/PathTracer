@@ -1,7 +1,19 @@
 #include "Debugging.h"
 #include "iostream"
+#include "Triangle.h"
+#include "Ray.h"
 #include <exception>
 using namespace std;
+
+
+Debugging::Debugging() {
+	storage.open(LOGFILE);
+}
+
+
+Debugging::~Debugging() {
+	storage.close();
+}
 
 
 void Debugging::print(const char* c) {
@@ -9,9 +21,6 @@ void Debugging::print(const char* c) {
 }
 
 
-#include "Vector.h"
-#include "Triangle.h"
-#include "Ray.h"
 bool Debugging::moduleTest() {
 	try {
 		Vector3 a(1.0f, 2.0f, 4.0f);
@@ -46,4 +55,68 @@ bool Debugging::moduleTest() {
 	}
 
 	return true;
+}
+
+
+void Debugging::timeCountStart() {
+	// calculate the time needed
+	start = time(NULL);
+
+	system("cls");
+	cout << "Rendering Progress: 0%" << endl;
+}
+
+
+void Debugging::timeCountEnd(){	
+	system("cls");
+	cout << "Rendering Progress: 100%" << endl;
+	cout << "Image has been rendered! Check the local image." << endl; 
+}
+
+
+void Debugging::showProgress(float progress) {
+	static float last_progress = 0.0f;
+	if (progress - last_progress > 1) {
+		last_progress = progress;
+		system("cls");
+		cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
+		current = time(NULL);
+		int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
+		cout << "Estimated left time: " << esti_time << "s" << endl;
+	}
+	return;
+}
+
+
+void Debugging::recordColor(int i, int j, Vector3* color) {
+	if (!sample) return;
+
+	stringstream stream;
+	stream << "Color (" << i << ", " << j << "): (" << setprecision(2)<<color->value[0] << ", "
+		<< color->value[1] << ", " << color->value[2] << ")";
+	LOGPRINT(stream.str().c_str());
+	return;
+}
+
+
+void Debugging::setSample(int i, int j, bool s) {
+	sample = s;
+	if (!s) return;
+	stringstream stream;
+	stream << "Sample one ray of Pixel: (" << i << ", " << j << ").";
+	LOGPRINT("");
+	LOGPRINT(stream.str().c_str());
+	return;
+}
+
+
+void Debugging::recordPath(string name, Vector3* hitPoint) {
+	if (!sample) return;
+	stringstream stream;
+	char c[15];
+	strcpy_s(c, name.c_str());
+	stream << "Hit object: " << c << "; Hit point: (" << setprecision(2) << hitPoint->value[0]
+		<< ", " << hitPoint->value[1] << ", " << hitPoint->value[2] << ").";
+	LOGPRINT(stream.str().c_str());
+	return;
 }

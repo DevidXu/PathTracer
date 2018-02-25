@@ -5,26 +5,27 @@
 These variables cannot be changed
 */
 
-#define UNCHANGE	1
+#define DEBUG		1
+#define SAMPLE_RATE 0.01
 
 #define HEIGHT		128
 #define WIDTH		128
 
-#define BOX_LENGTH	5.0  // x max
+#define BOX_LENGTH	7.0  // x max
 #define BOX_WIDTH	4.0  // y max
 #define BOX_HEIGHT	4.0  // z max
 
-#define CAMERA_POSITION Vector3(4.0f, 2.0f, 2.5f)
+#define CAMERA_POSITION Vector3(7.0f, 2.0f, 2.2f)
 #define CAMERA_FORWARD Vector3(-1.0f, 0.0f, 0.0f)
 
-#define ANGLEVIEWWIDTH 120
-#define ANGLEVIEWHEIGHT 120
+#define ANGLEVIEWWIDTH 53
+#define ANGLEVIEWHEIGHT 53
 
 #define SAMPLE_NUM 40
 
 #define MAX_DEPTH 5
 
-#define ENVIRONMENT_COLOR Vector3(0.0f, 0.0f, 0.0f)
+#define ENVIRONMENT_COLOR Vector3(0.1f, 0.1f, 0.1f)
 
 #define GLASS_REFRACTIVITY 1.5f
 

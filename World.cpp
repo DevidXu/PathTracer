@@ -1,6 +1,6 @@
 // This cpp file is the realization of World.h
 #include "World.h"
-#include <iomanip>
+
 
 World::World() {
 
@@ -28,7 +28,7 @@ void World::initialize() {
 	shared_ptr<Object> box, obj1, obj2, light;
 
 	// generate all the objects needed to add into cornell box
-	// this part mainly defines the shape, size, material, color and emissive attributes of every objects
+	// this part mainly defines the shape, size, material, color, emissive and name attributes of every objects
 	try {
 		// The big cornell box
 		box = make_shared<Object>(
@@ -38,7 +38,8 @@ void World::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.465f, 0.531f, 0.598f),
-			Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.0f, 0.0f, 0.0f),
+			"Cornell Box"
 			);
 
 		// the sphere of transparent material
@@ -48,8 +49,9 @@ void World::initialize() {
 				1.0f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY),
-			Vector3(0.1f, 0.1f, 0.1f),
-			Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.0f, 0.0f, 0.5f),
+			Vector3(0.0f, 0.0f, 0.0f),
+			"Glass Ball"
 			);
 
 		obj1->tessellate(2);
@@ -57,22 +59,24 @@ void World::initialize() {
 		// the rectangle of normal material
 		obj2 = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(1.0f, 2.5f, 0.0f),
-				Vector3(2.0f, 3.5f, 2.0f)
+				Vector3(1.0f, 2.3f, 0.0f),
+				Vector3(2.0f, 3.3f, 1.6f)
 				),
 			make_shared<Diff>(),
-			Vector3(0.6f, 0.0f, 0.0f),
-			Vector3(0.0f, 0.0f, 0.0f)
+			Vector3(0.7f, 0.0f, 0.0f),
+			Vector3(0.0f, 0.0f, 0.0f),
+			"Red Cube"
 			);
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(1.0f, 1.25f, 3.99f),
-				Vector3(2.5f, 2.75f, 4.0f)
+				Vector3(0.5f, 1.25f, 3.99f),
+				Vector3(2.0f, 2.75f, 4.0f)
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(20.0f, 20.0f, 20.0f)
+			Vector3(5000.0f, 5000.0f, 5000.0f),
+			"Light"
 			);
 	}
 	catch (exception e) {
@@ -86,7 +90,7 @@ void World::initialize() {
 		if (box == nullptr || obj1 == nullptr || obj2 == nullptr || light == nullptr)
 			throw("No pointer pointing to the shape created before.");
 		addObject(box);
-		//addObject(obj1);
+		addObject(obj1);
 		addObject(obj2);
 		addObject(light);
 	}
@@ -106,15 +110,16 @@ float MAX(float a, float b) {
 
 // This function will trace a given ray in the bounding box bbox, it will call itself recursively.
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
-	if (ray == nullptr) return ENVIRONMENT_COLOR;
 
 	float distance = MAX_DIS;
-	Triangle* patch = bbox->intersect(ray, distance); // find the triangle face that intersect with the ray
-	if (patch == nullptr) return ENVIRONMENT_COLOR;
+	Triangle* patch = bbox->intersect(ray, distance);	// find the triangle face that intersect with the ray
+	if (patch == nullptr) return ENVIRONMENT_COLOR;		// ray is nullptr or no hit triangle
 
 	Object* obj = patch->getOwner();
 
 	Vector3 hitPoint = ray->getOrigin() + ray->getDirection()*distance;
+
+	Debugging::getInstance()->recordPath(obj->getName(), &hitPoint);
 
 	Vector3 color = obj->getColor();
 	if (ray->getDepth() > MAX_DEPTH) {
@@ -150,17 +155,11 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 // This function begins path tracing
 RENDERSTATE World::renderScene() {
-	int height = camera->getHeight(), width = camera->getWidth();
 
-	float progress = 0.0f, last_progress = 0.0f;
+	int height = camera->getHeight(), width = camera->getWidth();
 	int sum_pixels = height * width;
 
-	// calculate the time needed
-	time_t start, current;
-	start = time(NULL);
-
-	system("cls");
-	cout << "Rendering Progress: 0%" << endl;
+	Debugging::getInstance()->timeCountStart();
 
 	for (int i = 0;i<height;i++)
 		for (int j = 0; j < width; j++) {
@@ -171,7 +170,11 @@ RENDERSTATE World::renderScene() {
 
 			Vector3 color(0.0f, 0.0f, 0.0f);
 			for (auto &ray : *rays) {
+				Debugging::getInstance()->setSample(i, j, (rand() / (RAND_MAX+1.0f)) < SAMPLE_RATE ? true : false);
+
 				Vector3 pixel_color = pathTracing(ray);
+				Debugging::getInstance()->recordColor(i, j, &pixel_color);
+
 				for (int k = 0; k < 3; k++) 
 					pixel_color.value[k] = pixel_color.value[k] > 1.0f ? 1.0f : pixel_color.value[k];
 				
@@ -182,21 +185,11 @@ RENDERSTATE World::renderScene() {
 			camera->Render(color, i, j);
 
 			// print the progress
-			progress = (i*width + j)*100.0f / sum_pixels;
-			if (progress - last_progress > 1) {
-				last_progress = progress;
-				system("cls");
-				cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
-				current = time(NULL);
-				int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
-				cout << "Estimated left time: " << esti_time << "s" << endl;
-			}
-
+			Debugging::getInstance()->showProgress((i*width + j)*100.0f / sum_pixels);
 		}
 
-	system("cls");
-	cout << "Rendering Progress: 100%" << endl;
-	cout << "Image has been rendered! Check the local image." << endl;
+	Debugging::getInstance()->timeCountEnd();
+
 	return true;
 }
 

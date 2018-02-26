@@ -37,7 +37,7 @@ void World::initialize() {
 				Vector3(BOX_LENGTH, BOX_WIDTH, BOX_HEIGHT)
 				),
 			make_shared<Diff>(),
-			Vector3(0.25f, 0.75f, 0.75f), //Vector3(0.465f, 0.531f, 0.598f),
+			Vector3(0.465f, 0.531f, 0.598f),
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Cornell Box"
 			);
@@ -46,7 +46,7 @@ void World::initialize() {
 		obj1 = make_shared<Object>(
 			make_shared<Sphere>(
 				Vector3(2.0f, 1.2f, 1.0f), //Vector3(0.0f, 0.0f, 0.0f), //
-				0.7f
+				1.0f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY),
 			Vector3(0.0f, 0.0f, 0.5f),
@@ -75,7 +75,7 @@ void World::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(500.0f, 500.0f, 500.0f),
+			Vector3(5000.0f, 5000.0f, 5000.0f),
 			"Light"
 			);
 	}

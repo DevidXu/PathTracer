@@ -1,6 +1,0 @@
-image 0: 128*128, SN:40, MD:5, Color 10, envir: 0.1
-image 1: 128*128, SN:40, MD:5, Color 20, env: 0.1
-image 2: 128*128, SN:60, MD:5, Color 20, env: 0.1
-image 3: 128*128, SN:20, MD:5, Color 30, env: 0.05
-image 4: 128*128, SN:40, MD:5, Color 40, env: 0.05
-image 5: 512*512, SN:200, MD:5, Color 40, env: 0.05, 10hours

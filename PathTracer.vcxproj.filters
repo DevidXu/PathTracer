@@ -39,24 +39,6 @@
     <ClInclude Include="Object.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="BMPGraph.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Shape.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Ray.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -73,27 +55,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="BMPGraph.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Shape.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Ray.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

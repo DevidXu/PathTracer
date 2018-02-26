@@ -64,6 +64,7 @@ void Debugging::timeCountStart() {
 
 	system("cls");
 	cout << "Rendering Progress: 0%" << endl;
+	cout << "Estimated Left Time: 10h" << endl;
 }
 
 
@@ -76,14 +77,24 @@ void Debugging::timeCountEnd(){
 
 void Debugging::showProgress(float progress) {
 	static float last_progress = 0.0f;
+
 	if (progress - last_progress > 1) {
 		last_progress = progress;
 		system("cls");
 		cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
 		current = time(NULL);
 		int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
-		cout << "Estimated left time: " << esti_time << "s" << endl;
+		
+		// standardlize the output
+		cout << "Estimated Left Time: ";
+		if (esti_time >= 3600) cout << esti_time / 3600 << "h";
+		esti_time %= 3600;
+		if (esti_time >= 60) cout << esti_time / 60 << "m";
+		esti_time %= 60;
+		if (esti_time > 0) cout << esti_time << "s";
+		cout << endl;
 	}
+
 	return;
 }
 

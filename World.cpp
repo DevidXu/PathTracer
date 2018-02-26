@@ -58,7 +58,9 @@ float MAX(float a, float b) {
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 	float distance = MAX_DIS;
+	Debug->timing("Intersect", true);
 	Triangle* patch = bbox->intersect(ray, distance);	// find the triangle face that intersect with the ray
+	Debug->timing("Intersect", false);
 	if (patch == nullptr) return ENVIRONMENT_COLOR;		// ray is nullptr or no hit triangle
 
 	Object* obj = patch->getOwner();
@@ -78,10 +80,12 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
 	}
 
-	shared_ptr<Ray> refractRay = make_shared<Ray>();
+	shared_ptr<Ray> refractRay = nullptr; // make_shared<Ray>();
 
 #ifdef GLOBAL
+	Debug->timing("Transmit", true);
     ray->transmit(patch, &hitPoint, obj->getMaterial(), refractRay);		// material decide the outward direction
+	Debug->timing("Transmit", false);
 #endif
 
 	if (obj->getColor().magnitude() == 0.0f) 

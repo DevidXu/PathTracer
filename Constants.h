@@ -9,8 +9,8 @@ These variables cannot be changed
 
 #define SAMPLE_RATE 0.001
 
-#define HEIGHT		128
-#define WIDTH		128
+#define HEIGHT		80
+#define WIDTH		80
 
 #define BOX_LENGTH	7.0f  // x max
 #define BOX_WIDTH	4.0f  // y max
@@ -22,7 +22,7 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 53
 #define ANGLEVIEWHEIGHT 53
 
-#define SAMPLE_NUM 160
+#define SAMPLE_NUM 40
 
 #define MAX_DEPTH 5
 
@@ -39,5 +39,5 @@ These variables cannot be changed
 
 // DEBUG DEFINES
 
-#define TESSELLATE
+//#define TESSELLATE
 #define GLOBAL

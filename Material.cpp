@@ -27,6 +27,8 @@ void Diff::transmit(
 	ray->setDirection(direction);
 	ray->setOrigin(*hitPoint);
 
+	refractRay->setDirection(Vector3(0.0f, 0.0f, 0.0f));
+
 	return;
 }
 
@@ -44,6 +46,8 @@ void Spec::transmit(
 
 	ray->setOrigin(*hitPoint);
 	ray->setDirection(direction);
+
+	refractRay->setDirection(Vector3(0.0f, 0.0f, 0.0f));
 
 	return;
 }

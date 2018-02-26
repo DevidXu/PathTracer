@@ -80,7 +80,7 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(10.0f, 10.0f, 10.0f),
+			Vector3(30.0f, 30.0f, 30.0f),
 			"Light"
 			);
 	}

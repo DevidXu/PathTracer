@@ -47,6 +47,9 @@ public:
 	void timeCountEnd();
 	void showProgress(float progress);
 
+	// render the image at certain interval
+	bool renderInterval(time_t current_time);
+
 	// show color for each pixel
 	void recordColor(int i, int j, Vector3* color);
 

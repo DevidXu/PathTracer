@@ -64,6 +64,7 @@ void Refl::transmit(
 	_ASSERT(refractivity != 0.0f);
 
 	ray->setOrigin(*hitPoint);
+	refractRay->setOrigin(*hitPoint);
 
 	Vector3 direction;
 

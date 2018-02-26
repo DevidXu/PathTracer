@@ -5,7 +5,9 @@
 #include <exception>
 using namespace std;
 
-#define MAX_MODULENAME 20
+#define MAX_MODULENAME 15
+
+#define RENDER_INTERVAL 600
 
 Debugging::Debugging() {
 	storage.open(LOGFILE);
@@ -136,7 +138,7 @@ void Debugging::recordPath(string name, Vector3* hitPoint) {
 
 
 void Debugging::timing(string moduleName, bool start) {
-	_ASSERT(moduleName.length() < MAX_MODULENAME);
+	return; // this function will consume much time (almost 40% increase!)
 
 	map<string, float>::iterator iter;
 	iter = time_map.find(moduleName);
@@ -161,4 +163,15 @@ void Debugging::showTiming() {
 		cout.width(MAX_MODULENAME); cout << iter->first;
 		cout << ": " << int(iter->second) << "s"<<endl;
 	}
+}
+
+
+bool Debugging::renderInterval(time_t current_time) {
+	static time_t last_time = time(NULL);
+	if (current_time - last_time > RENDER_INTERVAL) {
+		last_time = current_time;
+		return true;
+	}
+
+	return false;
 }

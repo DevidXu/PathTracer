@@ -9,8 +9,8 @@ These variables cannot be changed
 
 #define SAMPLE_RATE 0.001
 
-#define HEIGHT		80
-#define WIDTH		80
+#define HEIGHT		256
+#define WIDTH		256
 
 #define BOX_LENGTH	7.0f  // x max
 #define BOX_WIDTH	4.0f  // y max
@@ -22,11 +22,11 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 53
 #define ANGLEVIEWHEIGHT 53
 
-#define SAMPLE_NUM 40
+#define SAMPLE_NUM 200
 
 #define MAX_DEPTH 5
 
-#define ENVIRONMENT_COLOR Vector3(0.1f, 0.1f, 0.1f)
+#define ENVIRONMENT_COLOR Vector3(0.05f, 0.05f, 0.05f)
 
 #define GLASS_REFRACTIVITY 1.5f
 

@@ -245,7 +245,7 @@ void BBox::addMesh(Mesh mesh) {
 
 
 Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
-	if (ray == nullptr || ray->getDirection() == Vector3(0.0f, 0.0f, 0.0f)) 
+	if (ray == nullptr || ray->getDirection().magnitude() < EPISILON) 
 		return nullptr;
 
 	ray->incDepth();

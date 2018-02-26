@@ -80,7 +80,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
 	}
 
-	shared_ptr<Ray> refractRay = nullptr; // make_shared<Ray>();
+	shared_ptr<Ray> refractRay = make_shared<Ray>();
 
 #ifdef GLOBAL
 	Debug->timing("Transmit", true);
@@ -96,7 +96,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 #endif
 
 	float rate = 1.0f;
-	if (refractRay) rate = 0.5f;
+	//if (refractRay) rate = 0.5f;
 	Vector3 rayColor = (pathTracing(ray) + pathTracing(refractRay))*rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
 
 	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
@@ -114,25 +114,25 @@ RENDERSTATE World::renderScene() {
 
 	Debug->timeCountStart();
 
-	for (int i = 0;i<height;i++)
+	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
-			
+
 			Debug->timing("Generate Ray", true);
 			camera->generateRay(rays, i, j);
 			Debug->timing("Generate Ray", false);
 
 			Vector3 color(0.0f, 0.0f, 0.0f);
 			for (auto &ray : *rays) {
-				Debug->setSample(i, j, (rand() / (RAND_MAX+1.0f)) < SAMPLE_RATE ? true : false);
-				
+				Debug->setSample(i, j, (rand() / (RAND_MAX + 1.0f)) < SAMPLE_RATE ? true : false);
+
 				Debug->timing("Path Tracing", true);
 				Vector3 pixel_color = pathTracing(ray);
 				Debug->timing("Path Tracing", false);
 
 				Debug->recordColor(i, j, &pixel_color);
-				
+
 				// pixel color might be larger than 1 for strong light
 				color = color + pixel_color;
 			}
@@ -147,6 +147,11 @@ RENDERSTATE World::renderScene() {
 			// print the progress
 			Debug->showProgress((i*width + j)*100.0f / sum_pixels);
 		}
+
+		// after certain time, render the image temporarily
+		if (Debug->renderInterval(time(NULL))) camera->drawScene();
+
+	}
 
 	Debug->timeCountEnd();
 	Debug->showTiming();

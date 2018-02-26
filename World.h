@@ -6,7 +6,7 @@ This class is the main class after we start the program. It will construct the w
 */
 #include "Singleton.h"
 #include "BBox.h"
-#include "Object.h"
+#include "ObjectManager.h"
 #include "Camera.h"
 #include "Ray.h"
 #include "Constants.h"

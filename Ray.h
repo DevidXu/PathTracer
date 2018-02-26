@@ -31,13 +31,9 @@ public:
 		depth = 0;
 	};
 
-	Ray(const Ray& ray) {
-		origin = ray.origin;
-		direction = ray.direction;
-		depth = ray.depth;
-		intensity = ray.intensity;
-		positions = ray.positions;
-	}
+	Ray(const Ray& ray); 
+
+	void operator=(const Ray& ray);
 
 	void incDepth() { depth += 1; }
 

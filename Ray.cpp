@@ -2,6 +2,26 @@
 #include "Material.h"
 
 
+Ray::Ray(const Ray& ray) {
+	origin = ray.origin;
+	direction = ray.direction;
+	depth = ray.depth;
+	intensity = ray.intensity;
+	positions = ray.positions;
+	directions = ray.directions;
+}
+
+
+void Ray::operator=(const Ray& ray) {
+	origin = ray.origin;
+	direction = ray.direction;
+	depth = ray.depth;
+	intensity = ray.intensity;
+	positions = ray.positions;
+	directions = ray.directions;
+}
+
+
 void Ray::setOrigin(Vector3 o) {
 	origin = o;
 	positions.push_back(o);

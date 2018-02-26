@@ -5,12 +5,15 @@
 
 #include "Singleton.h"
 #include "Vector.h"
+#include <map>
 #include <time.h>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 
-#define LOGPRINT(x) Debugging::getInstance()->print(x)
+#define LOGPRINT(x) Debug->print(x)
+
+#define Debug		Debugging::getInstance()
 
 using namespace std;
 
@@ -21,6 +24,10 @@ private:
 
 	// used to calculate progress
 	time_t start, current;
+
+	// calculate time consumed for each module
+	map<string, clock_t> timing_map;
+	map<string, float> time_map;
 
 	// decide whether sample
 	bool sample;
@@ -45,6 +52,9 @@ public:
 
 	// show the path for the ray
 	void recordPath(string name, Vector3* hitPoint);
+
+	void timing(string moduleName, bool start);
+	void showTiming();
 
 	bool moduleTest();
 };

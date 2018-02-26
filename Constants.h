@@ -6,14 +6,15 @@ These variables cannot be changed
 */
 
 #define DEBUG		1
-#define SAMPLE_RATE 0.0001
 
-#define HEIGHT		256
-#define WIDTH		256
+#define SAMPLE_RATE 0.001
 
-#define BOX_LENGTH	7.0  // x max
-#define BOX_WIDTH	4.0  // y max
-#define BOX_HEIGHT	4.0  // z max
+#define HEIGHT		128
+#define WIDTH		128
+
+#define BOX_LENGTH	7.0f  // x max
+#define BOX_WIDTH	4.0f  // y max
+#define BOX_HEIGHT	4.0f  // z max
 
 #define CAMERA_POSITION Vector3(7.0f, 2.0f, 2.2f)
 #define CAMERA_FORWARD Vector3(-1.0f, 0.0f, 0.0f)
@@ -21,7 +22,7 @@ These variables cannot be changed
 #define ANGLEVIEWWIDTH 53
 #define ANGLEVIEWHEIGHT 53
 
-#define SAMPLE_NUM 60
+#define SAMPLE_NUM 160
 
 #define MAX_DEPTH 5
 
@@ -38,5 +39,5 @@ These variables cannot be changed
 
 // DEBUG DEFINES
 
-//#define TESSELLATE
+#define TESSELLATE
 #define GLOBAL

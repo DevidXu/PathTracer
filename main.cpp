@@ -17,8 +17,9 @@ using namespace std;
 
 int main()
 {
-	//Debugging::getInstance()->moduleTest();
+	//Debug->moduleTest();
 	srand((unsigned int)time(NULL));
+
 	World* world = World::getInstance();
 
 	// intialize the bounding box and add two rectangles.s

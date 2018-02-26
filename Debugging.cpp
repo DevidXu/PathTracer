@@ -5,6 +5,7 @@
 #include <exception>
 using namespace std;
 
+#define MAX_MODULENAME 20
 
 Debugging::Debugging() {
 	storage.open(LOGFILE);
@@ -71,7 +72,7 @@ void Debugging::timeCountStart() {
 void Debugging::timeCountEnd(){	
 	system("cls");
 	cout << "Rendering Progress: 100%" << endl;
-	cout << "Image has been rendered! Check the local image." << endl; 
+	cout << "Image has been rendered! Check the local image." << endl;
 }
 
 
@@ -81,6 +82,7 @@ void Debugging::showProgress(float progress) {
 	if (progress - last_progress > 1) {
 		last_progress = progress;
 		system("cls");
+		
 		cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
 		current = time(NULL);
 		int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
@@ -130,4 +132,33 @@ void Debugging::recordPath(string name, Vector3* hitPoint) {
 		<< ", " << hitPoint->value[1] << ", " << hitPoint->value[2] << ").";
 	LOGPRINT(stream.str().c_str());
 	return;
+}
+
+
+void Debugging::timing(string moduleName, bool start) {
+	_ASSERT(moduleName.length() < MAX_MODULENAME);
+
+	map<string, float>::iterator iter;
+	iter = time_map.find(moduleName);
+	if (iter == time_map.end()) time_map[moduleName] = 0.0f;
+
+	if (start) {
+		timing_map[moduleName] = clock();
+	}
+	else {
+		time_map[moduleName] += float(clock() - timing_map[moduleName]) / CLOCKS_PER_SEC;
+	}
+
+	return;
+}
+
+
+void Debugging::showTiming() {
+	cout << "Timing for each module: " << endl;
+
+	for (map<string, float>::iterator iter = time_map.begin(); iter != time_map.end();iter++) {
+		cout << "Time consumed for ";
+		cout.width(MAX_MODULENAME); cout << iter->first;
+		cout << ": " << int(iter->second) << "s"<<endl;
+	}
 }

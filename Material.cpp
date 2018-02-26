@@ -70,9 +70,8 @@ void Refl::transmit(
 		return;
 	}
 
-	direction = ray->getDirection() - triangle->getNormal()*dot * 2;
-	ray->setDirection(direction); // ray turns into the reflected ray
 
+	// calculate the refracted ray first
 	if (dot >= 0.0f) { // if ray goes from dense material to sparse material (glass to air); normal face unit is utilized here
 
 		float theta = acos(dot);
@@ -84,7 +83,7 @@ void Refl::transmit(
 		float out_theta = asin(refractivity*sin(theta)) - EPISILON;
 		_ASSERT(out_theta < PI / 2);
 
-		refractRay = make_shared<Ray>(*ray);
+		*refractRay = *ray;
 
 		Vector3 temp = triangle->getNormal()*dot;
 		
@@ -94,10 +93,10 @@ void Refl::transmit(
 	}
 	else {
 		_ASSERT(refractivity != 0.0f);
-		float theta = acos(dot);
+		float theta = acos(-dot);
 		float out_theta = asin(sin(theta)/refractivity);
 		
-		refractRay = make_shared<Ray>(*ray);
+		*refractRay = *ray;
 
 		Vector3 temp = triangle->getNormal()*dot;
 
@@ -105,6 +104,11 @@ void Refl::transmit(
 
 		refractRay->setDirection(direction);
 	}
+
+	// calculate the transmitted reflected ray (change on original ray)
+	direction = ray->getDirection() - triangle->getNormal()*dot * 2;
+	ray->setDirection(direction); // ray turns into the reflected ray
+
 
 	return;
 }

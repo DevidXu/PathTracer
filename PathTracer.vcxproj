@@ -117,21 +117,31 @@
   <ItemGroup>
     <ClInclude Include="BBox.h" />
     <ClInclude Include="BMPGraph.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Debugging.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="Raster.h" />
+    <ClInclude Include="Ray.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BBox.cpp" />
     <ClCompile Include="BMPGraph.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Debugging.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Raster.cpp" />
+    <ClCompile Include="Ray.cpp" />
+    <ClCompile Include="Shape.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Vector.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>

@@ -1,0 +1,32 @@
+﻿  main.cpp
+d:\microsoft visual studio\projects\pathtracer\pathtracer\singleton.h(17): error C2248: “Debugging::Debugging”: 无法访问 private 成员(在“Debugging”类中声明)
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\debugging.h(16): note: 参见“Debugging::Debugging”的声明
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\debugging.h(11): note: 参见“Debugging”的声明
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\singleton.h(15): note: 编译 类 模板 成员函数 "Debugging *Singleton<Debugging>::getInstance(void)" 时
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\main.cpp(17): note: 参见对正在编译的函数 模板 实例化“Debugging *Singleton<Debugging>::getInstance(void)”的引用
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\debugging.h(11): note: 参见对正在编译的 类 模板 实例化 "Singleton<Debugging>" 的引用
+  World.cpp
+d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(19): error C2440: “return”: 无法从“const float”转换为“float &”
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(19): note: 转换丢失限定符
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(18): note: 编译 类 模板 成员函数 "float &Vector<4>::operator [](const int) const" 时
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(191): note: 参见对正在编译的函数 模板 实例化“float &Vector<4>::operator [](const int) const”的引用
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(180): note: 参见对正在编译的 类 模板 实例化 "Vector<4>" 的引用
+  Raster.cpp
+d:\microsoft visual studio\projects\pathtracer\pathtracer\raster.cpp(18): error C2659: “=”: 作为左操作数
+d:\microsoft visual studio\projects\pathtracer\pathtracer\raster.cpp(34): error C2664: “Vector3::Vector3(const Vector3 &)”: 无法将参数 1 从“Vector4”转换为“float”
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\raster.cpp(34): note: 没有可用于执行该转换的用户定义的转换运算符，或者无法调用该运算符
+d:\microsoft visual studio\projects\pathtracer\pathtracer\raster.cpp(26): error C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\stdio.h(207): note: 参见“fopen”的声明
+d:\microsoft visual studio\projects\pathtracer\pathtracer\raster.cpp(51): error C4996: 'getcwd': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _getcwd. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.16299.0\ucrt\direct.h(93): note: 参见“getcwd”的声明
+  Debugging.cpp
+d:\microsoft visual studio\projects\pathtracer\pathtracer\debugging.cpp(23): warning C4102: “finally”: 未引用的标签
+d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(19): error C2440: “return”: 无法从“const float”转换为“float &”
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(19): note: 转换丢失限定符
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(18): note: 编译 类 模板 成员函数 "float &Vector<4>::operator [](const int) const" 时
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(191): note: 参见对正在编译的函数 模板 实例化“float &Vector<4>::operator [](const int) const”的引用
+  d:\microsoft visual studio\projects\pathtracer\pathtracer\vector.h(180): note: 参见对正在编译的 类 模板 实例化 "Vector<4>" 的引用
+  正在生成代码...
+  正在编译...
+  BBox.cpp
+  正在生成代码...

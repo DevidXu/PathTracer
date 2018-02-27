@@ -104,6 +104,9 @@ void Debugging::showProgress(float progress) {
 
 
 void Debugging::recordColor(int i, int j, Vector3* color) {
+#ifndef DEBUG
+	return;
+#endif
 	if (!sample) return;
 
 	stringstream stream;
@@ -115,6 +118,9 @@ void Debugging::recordColor(int i, int j, Vector3* color) {
 
 
 void Debugging::setSample(int i, int j, bool s) {
+#ifndef DEBUG
+	return;
+#endif
 	sample = s;
 	if (!s) return;
 	stringstream stream;
@@ -126,6 +132,9 @@ void Debugging::setSample(int i, int j, bool s) {
 
 
 void Debugging::recordPath(string name, Vector3* hitPoint) {
+#ifndef DEBUG
+	return;
+#endif
 	if (!sample) return;
 	stringstream stream;
 	char c[15];
@@ -138,7 +147,9 @@ void Debugging::recordPath(string name, Vector3* hitPoint) {
 
 
 void Debugging::timing(string moduleName, bool start) {
+#ifndef DEBUG
 	return; // this function will consume much time (almost 40% increase!)
+#endif
 
 	map<string, float>::iterator iter;
 	iter = time_map.find(moduleName);

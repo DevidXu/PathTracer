@@ -52,9 +52,9 @@ void ObjectManager::initialize() {
 				Vector3(2.0f, 1.2f, 1.0f), //Vector3(0.0f, 0.0f, 0.0f), //
 				0.7f
 				),
-			//make_shared<Refl>(GLASS_REFRACTIVITY),
-			make_shared<Spec>(),
-			Vector3(0.0f, 0.0f, 0.97f),
+			make_shared<Refl>(GLASS_REFRACTIVITY),
+			//make_shared<Spec>(),
+			Vector3(0.95f, 0.95f, 0.95f),
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Glass Ball"
 			);
@@ -75,12 +75,12 @@ void ObjectManager::initialize() {
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(0.5f, 1.25f, 3.99f),
-				Vector3(2.0f, 2.75f, 4.0f)
+				Vector3(1.0f, 1.25f, 3.99f),
+				Vector3(2.5f, 2.75f, 4.0f)
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(35.0f, 35.0f, 35.0f),
+			Vector3(10.0f, 10.0f, 10.0f),
 			"Light"
 			);
 	}

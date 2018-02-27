@@ -1,5 +1,6 @@
 // This cpp file is the realization of World.h
 #include "World.h"
+#include <omp.h>
 
 
 World::World() {
@@ -74,6 +75,9 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 	Vector3 color = obj->getColor();
 	if (ray->getDepth() > MAX_DEPTH) {
+		if (ray->getDepth() > DARK_DEPTH)
+			return ENVIRONMENT_COLOR;
+
 		float p = MAX(MAX(color.value[0], color.value[1]), color.value[2]);
 		if (rand()/(RAND_MAX+1.0f)>p)
 			return ENVIRONMENT_COLOR;
@@ -114,6 +118,13 @@ RENDERSTATE World::renderScene() {
 
 	Debug->timeCountStart();
 
+	Vector3 color;
+
+#ifndef _OPENMP
+	LOGPRINT("OpenMP is not supported on your computer");
+#else
+#pragma omp parallel for  schedule(dynamic, 1) private(color)
+#endif
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
@@ -123,7 +134,7 @@ RENDERSTATE World::renderScene() {
 			camera->generateRay(rays, i, j);
 			Debug->timing("Generate Ray", false);
 
-			Vector3 color(0.0f, 0.0f, 0.0f);
+			color = Vector3(0.0f, 0.0f, 0.0f);
 			for (auto &ray : *rays) {
 				Debug->setSample(i, j, (rand() / (RAND_MAX + 1.0f)) < SAMPLE_RATE ? true : false);
 

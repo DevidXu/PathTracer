@@ -78,26 +78,38 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
 	}
 
-	shared_ptr<Ray> refractRay = make_shared<Ray>();
+	shared_ptr<Ray> refractRay = make_shared<Ray>(*ray);
 
 #ifdef GLOBAL
 	Debug->timing("Transmit", true);
-    ray->transmit(patch, &hitPoint, obj->getMaterial(), refractRay);		// material decide the outward direction
+    LightRate rate = ray->transmit(patch, &hitPoint, obj->getMaterial(), refractRay);		// material decide the outward direction
 	Debug->timing("Transmit", false);
 #endif
 
+	// put there to record the hit position
 	if (obj->getColor().magnitude() == 0.0f) 
 		return obj->getEmissive();		// if meet the light source
 
 #ifndef GLOBAL
 	return obj->getColor();
 #endif
-
-	float rate = 1.0f;
-	if (refractRay->getDirection().magnitude() > EPISILON) // if exist refract ray
-		rate = 0.7f;
-	Vector3 rayColor = pathTracing(ray)*rate + pathTracing(refractRay)*(1-rate);	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
-
+	Vector3 rayColor; // recursive process here to trace the ray
+	rayColor = pathTracing(ray)*rate.ray_rate + pathTracing(refractRay)*rate.refractRay_rate;
+	/*
+	if (rate.refractRay_rate == 0.0f)
+		rayColor = pathTracing(ray)*rate.ray_rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
+	else {
+		// possibility of transmisison, reflective
+		float P = 0.25f + 0.5f*rate.ray_rate, RP = rate.ray_rate / P, TP = rate.refractRay_rate / (1 - P);
+		if (ray->getDepth() > 2) {
+			if (rand() / RAND_MAX < P)
+				rayColor = pathTracing(ray)*RP;
+			else
+				rayColor = pathTracing(refractRay)*TP;
+		}
+		else rayColor = pathTracing(ray)*rate.ray_rate + pathTracing(refractRay)*rate.refractRay_rate;
+	}
+	*/
 	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
 
 	return obj->getEmissive() + rayColor;

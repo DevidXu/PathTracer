@@ -9,14 +9,14 @@ These variables cannot be changed
 
 #define SAMPLE_RATE 0.0001
 
-#define HEIGHT		512
-#define WIDTH		512
+#define HEIGHT		256
+#define WIDTH		256
 
-#define SAMPLE_NUM		1600  // must be times of 4
+#define SAMPLE_NUM		400  // must be times of 4
 
-#define TESSELLATE		1
+//#define TESSELLATE		1
 
-#define ENVIRONMENT_COLOR	Vector3(0.0f, 0.0f, 0.0f)
+#define ENVIRONMENT_COLOR	Vector3(0.05f, 0.05f, 0.05f)
 
 #define BOX_LENGTH	7.0f  // x max
 #define BOX_WIDTH	4.0f  // y max

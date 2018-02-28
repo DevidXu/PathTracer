@@ -42,14 +42,12 @@ void Ray::initialize(Vector3 o, Vector3 d) {
 }
 
 
-void Ray::transmit(
+LightRate Ray::transmit(
 	Triangle* triangle, 
 	Vector3* hitPoint, 
 	shared_ptr<Material> material, 
 	shared_ptr<Ray> refractRay
 ) {
 	// decide the returned ray(fix on current ray) according to the material kind
-	material->transmit(triangle, hitPoint, this, refractRay);
-
-	return;
+	return material->transmit(triangle, hitPoint, this, refractRay);
 }

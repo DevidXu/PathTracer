@@ -44,6 +44,7 @@ void Shape::translate(Vector3 movement) {
 }
 
 
+// unit is degree
 void Shape::rotate(float x_angle, float y_angle, float z_angle) {
 	Vector3 eulerAngle(x_angle, y_angle, z_angle);
 	rotate(eulerAngle);
@@ -95,13 +96,13 @@ void Shape::rotate(Vector4 quaternion) {
 
 	for (auto ptr : vertexs) {
 		Vector3 temp(
-			matrix0.dot(*ptr),
-			matrix1.dot(*ptr),
-			matrix2.dot(*ptr)
+			matrix0.dot(*ptr-center),
+			matrix1.dot(*ptr-center),
+			matrix2.dot(*ptr-center)
 		);
 
 		for (int i = 0; i < 3; i++)
-			ptr->value[i] = temp[i];
+			ptr->value[i] = temp[i]+center[i];
 	}
 
 	center = Vector3(matrix0.dot(center), matrix1.dot(center), matrix2.dot(center));

@@ -2,7 +2,7 @@
 
 
 // calculate the transmited ray for diffuse material
-void Diff::transmit(
+LightRate Diff::transmit(
 	Triangle* triangle, 
 	Vector3* hitPoint, 
 	Ray* ray, 
@@ -27,14 +27,14 @@ void Diff::transmit(
 	ray->setDirection(direction);
 	ray->setOrigin(*hitPoint);
 
-	refractRay->setDirection(Vector3(0.0f, 0.0f, 0.0f));
+	refractRay->setDirection(Vector3());
 
-	return;
+	return LightRate(1.0f, 0.0f);
 }
 
 
 // calculate the transmited ray for specular material (total reflect)
-void Spec::transmit(
+LightRate Spec::transmit(
 	Triangle* triangle, 
 	Vector3* hitPoint, 
 	Ray* ray,
@@ -47,15 +47,15 @@ void Spec::transmit(
 	ray->setOrigin(*hitPoint);
 	ray->setDirection(direction);
 
-	refractRay->setDirection(Vector3(0.0f, 0.0f, 0.0f));
+	refractRay->setDirection(Vector3());
 
-	return;
+	return LightRate(1.0f, 0.0f);
 }
 
 
 // calculate the transmited ray for reflective material, it will contain the reflect ray and refract ray
 // new ray: refractRay is added into the scene
-void Refl::transmit(
+LightRate Refl::transmit(
 	Triangle* triangle, 
 	Vector3* hitPoint, 
 	Ray* ray,
@@ -66,54 +66,24 @@ void Refl::transmit(
 	ray->setOrigin(*hitPoint);
 	refractRay->setOrigin(*hitPoint);
 
-	Vector3 direction;
-
 	float dot = ray->getDirection().dot(triangle->getNormal());
+	Vector3 reflect_direction = ray->getDirection() - triangle->getNormal()*dot * 2;
 
-	if (dot == 1.0f || dot == -1.0f) {
-		refractRay = nullptr;
-		return;
+	Vector3 n = triangle->getNormal();
+	Vector3 nl = n.dot(ray->getDirection()) < 0 ? n : n * -1;
+	bool into = n.dot(nl) > 0;
+	float nnt = into ? 1.0f / refractivity : refractivity, ddn = ray->getDirection().dot(nl), cos2t;
+	if ((cos2t = 1 - nnt * nnt*(1 - ddn * ddn)) < 0) {  // total internal reflection
+		refractRay->setDirection(Vector3());
+		ray->setDirection(reflect_direction);
+		return LightRate(1.0f, 0.0f);
 	}
 
+	Vector3 refract_dir = (ray->getDirection()*nnt - n * ((into ? 1 : -1)*(ddn*nnt + sqrt(cos2t)))).normalize();
+	ray->setDirection(reflect_direction);
+	refractRay->setDirection(refract_dir);
+	float a = refractivity - 1.0f, b = refractivity + 1.0f, R0 = a * a / (b*b), c = 1 - (into ? -ddn : refract_dir.dot(n));
+	float Re = R0 + (1 - R0)*c*c*c*c*c, Tr = 1 - Re;
 
-	// calculate the refracted ray first
-	if (dot >= 0.0f) { // if ray goes from dense material to sparse material (glass to air); normal face unit is utilized here
-
-		float theta = acos(dot);
-		if (theta >= bounding_angle || dot == 0.0f) {  // if the angle > bounding angle, total reflection
-			refractRay = nullptr;
-			return;
-		}
-
-		float out_theta = asin(refractivity*sin(theta)) - EPISILON;
-		_ASSERT(out_theta < PI / 2);
-
-		*refractRay = *ray;
-
-		Vector3 temp = triangle->getNormal()*dot;
-		
-		direction = (temp + (ray->getDirection() - temp) / tan(theta)*tan(out_theta)).normalize();
-
-		refractRay->setDirection(direction);
-	}
-	else {
-		_ASSERT(refractivity != 0.0f);
-		float theta = acos(-dot);
-		float out_theta = asin(sin(theta)/refractivity);
-		
-		*refractRay = *ray;
-
-		Vector3 temp = triangle->getNormal()*dot;
-
-		direction = (temp + (ray->getDirection() - temp) / tan(theta)*tan(out_theta)).normalize();
-
-		refractRay->setDirection(direction);
-	}
-
-	// calculate the transmitted reflected ray (change on original ray)
-	direction = ray->getDirection() - triangle->getNormal()*dot * 2;
-	ray->setDirection(direction); // ray turns into the reflected ray
-
-
-	return;
+	return LightRate(Re, Tr);
 }

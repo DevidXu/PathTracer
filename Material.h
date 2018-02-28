@@ -15,13 +15,13 @@ private:
 
 public:
 	// if no refract ray, remember to set direction of refract ray as 0.0f
-	virtual void transmit(
+	virtual LightRate transmit(
 		Triangle* triangle,
 		Vector3* hitPoint,
 		Ray* ray,
 		shared_ptr<Ray> refractRay
 	) {
-		return;
+		return LightRate();
 	}
 
 	virtual bool isRefl() {
@@ -34,7 +34,7 @@ class Diff :public Material {	// diffuse material
 private:
 
 public:
-	virtual void transmit(
+	virtual LightRate transmit(
 		Triangle* triangle, 
 		Vector3* hitPoint, 
 		Ray* ray,
@@ -49,7 +49,7 @@ class Spec :public Material {	// specular material
 private:
 
 public:
-	virtual void transmit(
+	virtual LightRate transmit(
 		Triangle* triangle, 
 		Vector3* hitPoint, 
 		Ray* ray,
@@ -77,7 +77,7 @@ public:
 		return;
 	}
 
-	virtual void transmit(
+	virtual LightRate transmit(
 		Triangle* triangle, 
 		Vector3* hitPoint, 
 		Ray* ray,

@@ -10,6 +10,26 @@
 class Triangle;
 class Material;
 
+
+class LightRate {
+public:
+	float ray_rate;
+	float refractRay_rate;
+
+	LightRate() {
+		ray_rate = 1.0f;
+		refractRay_rate = 0.0f;
+	}
+
+	LightRate(float mRay, float mRefract) {
+		ray_rate = mRay;
+		refractRay_rate = mRefract;
+	}
+
+
+};
+
+
 class Ray {
 private:
 	Vector3 origin;		// origin position of ray in each iteration
@@ -62,7 +82,7 @@ public:
 		positions.push_back(position);
 	}
 
-	void transmit(
+	LightRate transmit(
 		Triangle* triangle, 
 		Vector3* hitPoint, 
 		shared_ptr<Material> material, 

@@ -151,14 +151,16 @@ Rectangle::Rectangle(Vector3 small, Vector3 big) {
 	v[6] = new Vector3(big);
 	v[7] = new Vector3(small.value[0], big.value[1], big.value[2]);
 
-	n[0] = new Vector3(0.0, -1.0, 0.0);
-	n[1] = new Vector3(0.0, -1.0, 0.0);
-	n[2] = new Vector3(0.0, 1.0, 0.0);
-	n[3] = new Vector3(0.0, 1.0, 0.0);
-	n[4] = new Vector3(0.0, -1.0, 0.0);
-	n[5] = new Vector3(0.0, -1.0, 0.0);
-	n[6] = new Vector3(0.0, 1.0, 0.0);
-	n[7] = new Vector3(0.0, 1.0, 0.0);
+	for (int i = 0; i < 8; i++) {
+		float k[3] = { 0.0f, 0.0f, 0.0f };
+		for (int j = 0; j < 3; j++) {
+			if (v[i][j] < big.value[j]) k[j] = -1.0f;
+			else k[j] = 1.0f;
+		}
+
+		n[i] = new Vector3(k[0], k[1], k[2]);
+		n[i]->normalize();
+	}
 
 	int index[36] = { 0,1,4,1,5,4,1,2,6,1,6,5,2,3,7,2,7,6,4,7,3,0,4,3,4,5,6,4,6,7,1,0,3,2,1,3 };
 	

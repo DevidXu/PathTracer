@@ -49,12 +49,6 @@ void World::initialize() {
 }
 
 
-float MAX(float a, float b) {
-	float r = a > b ? a : b;
-	return r;
-}
-
-
 // This function will trace a given ray in the bounding box bbox, it will call itself recursively.
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
@@ -78,7 +72,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 		if (ray->getDepth() > DARK_DEPTH)
 			return ENVIRONMENT_COLOR;
 
-		float p = MAX(MAX(color.value[0], color.value[1]), color.value[2]);
+		float p = color.max();
 		if (rand()/(RAND_MAX+1.0f)>p)
 			return ENVIRONMENT_COLOR;
 		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
@@ -100,8 +94,9 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 #endif
 
 	float rate = 1.0f;
-	//if (refractRay) rate = 0.5f;
-	Vector3 rayColor = (pathTracing(ray) + pathTracing(refractRay))*rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
+	if (refractRay->getDirection().magnitude() > EPISILON) // if exist refract ray
+		rate = 0.7f;
+	Vector3 rayColor = pathTracing(ray)*rate + pathTracing(refractRay)*(1-rate);	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
 
 	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
 

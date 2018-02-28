@@ -14,6 +14,7 @@ class Material:public Singleton<Material> {
 private:
 
 public:
+	// if no refract ray, remember to set direction of refract ray as 0.0f
 	virtual void transmit(
 		Triangle* triangle,
 		Vector3* hitPoint,

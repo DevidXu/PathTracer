@@ -5,6 +5,9 @@
 #include "iostream"
 using namespace std;
 
+float MAX(float a, float b);
+
+
 template <int n>
 class Vector {
 public:
@@ -109,6 +112,10 @@ public:
 		return result;
 	}
 
+	float max() {
+		return MAX(value[0], value[1]);
+	}
+
 	// override some functions
 	virtual float operator*(const Vector v) {
 		float temp;
@@ -169,6 +176,10 @@ public:
 			if (value[i] >= v.value[i]) return false;
 		
 		return true;
+	}
+
+	float max() {
+		return MAX(MAX(value[0], value[1]), value[2]);
 	}
 
 	float dot(const Vector3 v) {
@@ -272,6 +283,10 @@ public:
 			if (value[i] >= v.value[i]) return false;
 
 		return true;
+	}
+
+	float max() {
+		return MAX(MAX(MAX(value[0], value[1]), value[2]), value[3]);
 	}
 
 	float dot(const Vector4 v) {

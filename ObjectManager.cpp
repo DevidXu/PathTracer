@@ -52,14 +52,14 @@ void ObjectManager::initialize() {
 				Vector3(2.0f, 1.2f, 1.0f), //Vector3(0.0f, 0.0f, 0.0f), //
 				0.7f
 				),
-			make_shared<Refl>(GLASS_REFRACTIVITY),
-			//make_shared<Spec>(),
-			Vector3(0.95f, 0.95f, 0.95f),
+			//make_shared<Refl>(GLASS_REFRACTIVITY),
+			make_shared<Spec>(),
+			Vector3(0.99f, 0.99f, 0.99f),
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Glass Ball"
 			);
 
-		glass_ball->tessellate(2);
+		glass_ball->tessellate(4);
 
 		// the rectangle of normal material
 		red_cube = make_shared<Object>(
@@ -68,7 +68,7 @@ void ObjectManager::initialize() {
 				Vector3(2.0f, 3.3f, 1.6f)
 				),
 			make_shared<Diff>(),
-			Vector3(0.7f, 0.0f, 0.0f),
+			Vector3(0.7f, 0.1f, 0.2f),
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Red Cube"
 			);
@@ -80,7 +80,7 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(10.0f, 10.0f, 10.0f),
+			Vector3(18.0f, 18.0f, 18.0f),
 			"Light"
 			);
 	}

@@ -100,7 +100,7 @@ void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 	_ASSERT(width != 0);
 
 	try {
-		//postProcess(begin, DENOISE);
+		postProcess(begin, DENOISE);
 		saveBitmap(name, mark, width, height, begin);
 	}
 	catch (exception e) {

@@ -1,5 +1,12 @@
 #include "Vector.h"
 
+
+float MAX(float a, float b) {
+	float r = a > b ? a : b;
+	return r;
+}
+
+
 ostream &operator<<(ostream& out, const Vector2 &v) {
 	if (&v == nullptr) {
 		cout << "None ";

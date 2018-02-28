@@ -12,7 +12,7 @@ These variables cannot be changed
 #define HEIGHT		256
 #define WIDTH		256
 
-#define SAMPLE_NUM		400  // must be times of 4
+#define SAMPLE_NUM		500  // must be times of 4
 
 //#define TESSELLATE		1
 

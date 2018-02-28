@@ -73,7 +73,7 @@ Triangle* Cube::intersect(shared_ptr<Ray> ray, float* dis) {
 		shared_ptr<Vector3> hitPoint = make_shared<Vector3>();
 		if (ptr->hitRay(ray, hitPoint)) {
 			float temp_distance = ray->getOrigin().distance(*hitPoint);
-			if (hTriangle == nullptr || temp_distance < distance) {
+			if (temp_distance > EPISILON && (hTriangle == nullptr || temp_distance < distance)) {
 				distance = ray->getOrigin().distance(*hitPoint);
 				hTriangle = ptr;
 			}

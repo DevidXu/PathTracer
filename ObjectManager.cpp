@@ -17,7 +17,7 @@ void ObjectManager::initialize() {
 				Vector3(BOX_LENGTH, BOX_WIDTH, BOX_HEIGHT)
 				),
 			make_shared<Diff>(),
-			Vector3(0.465f, 0.531f, 0.598f),  // Vector3(0.75f, 0.75f, 0.75f)
+			Vector3(0.75f, 0.75f, 0.75f), // Vector3(0.465f, 0.531f, 0.598f)
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Cornell Box"
 			);
@@ -49,7 +49,7 @@ void ObjectManager::initialize() {
 		// the sphere of transparent material
 		glass_ball = make_shared<Object>(
 			make_shared<Sphere>(
-				Vector3(2.0f, 1.2f, 1.0f), //Vector3(0.0f, 0.0f, 0.0f), //
+				Vector3(2.0f, 1.2f, 2.5f),
 				0.7f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY),
@@ -64,17 +64,17 @@ void ObjectManager::initialize() {
 		// the rectangle of normal material
 		red_cube = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(1.0f, 2.3f, 0.0f),
-				Vector3(1.3f, 3.3f, 1.6f)
+				Vector3(2.0f, 0.5f, 0.0f), //Vector3(1.0f, 2.3f, 0.0f),
+				Vector3(2.1f, 3.5f, 2.0f) //Vector3(1.3f, 3.3f, 1.6f)
 				),
 			make_shared<Spec>(),
-			Vector3(0.999f, 0.999f, 0.999f),
+			Vector3(0.99f, 0.99f, 0.99f),
 			//make_shared<Diff>(),
 			//Vector3(0.97f, 0.1f, 0.2f),
 			Vector3(0.0f, 0.0f, 0.0f),
 			"Red Cube"
 			);
-		red_cube->getShape()->rotate(0.0f, 45.0f, 0.0f);
+		red_cube->getShape()->rotate(0.0f, 60.0f, 0.0f);
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
@@ -83,7 +83,7 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(50.0f, 50.0f, 50.0f),
+			Vector3(17.0f, 17.0f, 17.0f),
 			"Light"
 			);
 	}

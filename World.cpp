@@ -63,7 +63,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	Vector3 hitPoint = ray->getOrigin() + ray->getDirection()*distance;
 
 	Debug->recordPath(obj->getName(), &hitPoint);
-	if (obj->getName() == "Glass Ball") {
+	if (obj->getName() == "Red Cube") {
 		int k = 1;
 	}
 
@@ -94,7 +94,10 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	return obj->getColor();
 #endif
 	Vector3 rayColor; // recursive process here to trace the ray
-	rayColor = pathTracing(ray)*rate.ray_rate + pathTracing(refractRay)*rate.refractRay_rate;
+	rayColor =
+		(rate.ray_rate == 0.0f ? 0.0f : pathTracing(ray))*rate.ray_rate 
+		+
+		(rate.refractRay_rate == 0.0f ? 0.0f : pathTracing(refractRay))*rate.refractRay_rate;
 	/*
 	if (rate.refractRay_rate == 0.0f)
 		rayColor = pathTracing(ray)*rate.ray_rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
@@ -136,7 +139,8 @@ RENDERSTATE World::renderScene() {
 		for (int j = 0; j < width; j++) {
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
-
+			if (i == 70 && j == 40)
+				int l = 1;
 			Debug->timing("Generate Ray", true);
 			camera->generateRay(rays, i, j);
 			Debug->timing("Generate Ray", false);

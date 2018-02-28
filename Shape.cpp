@@ -74,39 +74,39 @@ void Shape::rotate(Vector3 eulerAngle) {
 
 
 void Shape::rotate(Vector4 quaternion) {
-	Vector4 q = quaternion;
+	Vector3 uv, uuv;
+	Vector3 qvec(quaternion.value[0], quaternion.value[1], quaternion.value[2]);
 
-	Vector3 matrix0(
-		square(q[0]) + square(q[1]) - square(q[2]) - square(q[3]),
-		2 * (q[1] * q[2] - q[0] * q[3]),
-		2 * (q[1] * q[3] - q[0] * q[2])
-	);
-
-	Vector3 matrix1(
-		2 * (q[1] * q[2] + q[0] * q[3]),
-		square(q[0]) - square(q[1]) + square(q[2]) - square(q[3]),
-		2 * (q[2] * q[3] - q[0] * q[1])
-	);
-
-	Vector3 matrix2(
-		2 * (q[1] * q[3] - q[0] * q[2]),
-		2 * (q[2] * q[3] - q[0] * q[1]),
-		square(q[0]) - square(q[1]) - square(q[2]) + square(q[3])
-	);
 
 	for (auto ptr : vertexs) {
-		Vector3 temp(
-			matrix0.dot(*ptr-center),
-			matrix1.dot(*ptr-center),
-			matrix2.dot(*ptr-center)
-		);
+		*ptr = *ptr - center;
+		uv = qvec * (*ptr);
+		uuv = qvec * uv;
+		uv = uv * (2.0f*quaternion.value[3]);
+		uuv = uuv * 2.0f;
 
-		for (int i = 0; i < 3; i++)
-			ptr->value[i] = temp[i]+center[i];
+		*ptr = (*ptr) + uv + uuv + center;
 	}
 
-	center = Vector3(matrix0.dot(center), matrix1.dot(center), matrix2.dot(center));
+	for (auto ptr : normals) {
+		uv = qvec * (*ptr);
+		uuv = qvec * uv;
+		uv = uv * (2.0f*quaternion.value[3]);
+		uuv = uuv * 2.0f;
 
+		*ptr = (*ptr) + uv + uuv;
+	}
+
+	for (auto ptr : meshes) {
+		Vector3 normalVector = ptr->getNormal();
+		uv = qvec * normalVector;
+		uuv = qvec * uv;
+		uv = uv * (2.0f*quaternion.value[3]);
+		uuv = uuv * 2.0f;
+
+		normalVector = normalVector + uv + uuv;
+		ptr->setNormalVector(normalVector);
+	}
 	return;
 }
 
@@ -139,7 +139,7 @@ Rectangle::Rectangle(Vector3 small, Vector3 big) {
 		LOGPRINT("Wrong vectors to initialize the rectangle.");
 	}
 
-	setCenter((small + big)*0.5);
+	setCenter((small + big)*0.5f);
 
 	Vector3 *v[8];
 	Vector3 *n[8];
@@ -155,7 +155,7 @@ Rectangle::Rectangle(Vector3 small, Vector3 big) {
 	for (int i = 0; i < 8; i++) {
 		float k[3] = { 0.0f, 0.0f, 0.0f };
 		for (int j = 0; j < 3; j++) {
-			if (v[i][j] < big.value[j]) k[j] = -1.0f;
+			if (v[i]->value[j] < big.value[j]) k[j] = -1.0f;
 			else k[j] = 1.0f;
 		}
 

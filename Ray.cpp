@@ -22,15 +22,21 @@ void Ray::operator=(const Ray& ray) {
 }
 
 
-void Ray::setOrigin(Vector3 o) {
+void Ray::setOrigin(Vector3 o, bool push) {
 	origin = o;
-	positions.push_back(o);
+	if (push) positions.push_back(o);
+	else { 
+		positions[positions.size()-1] = o; 
+	}
 }
 
 
-void Ray::setDirection(Vector3 d) {
+void Ray::setDirection(Vector3 d, bool push) {
 	direction = d;
-	directions.push_back(d);
+	if (push) directions.push_back(d);
+	else {
+		directions[directions.size()-1] = d;
+	}
 }
 
 void Ray::initialize(Vector3 o, Vector3 d) {
@@ -43,11 +49,11 @@ void Ray::initialize(Vector3 o, Vector3 d) {
 
 
 LightRate Ray::transmit(
-	Triangle* triangle, 
+	Vector3 normal, 
 	Vector3* hitPoint, 
 	shared_ptr<Material> material, 
 	shared_ptr<Ray> refractRay
 ) {
 	// decide the returned ray(fix on current ray) according to the material kind
-	return material->transmit(triangle, hitPoint, this, refractRay);
+	return material->transmit(normal, hitPoint, this, refractRay);
 }

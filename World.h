@@ -37,5 +37,10 @@ public:
 	// add an object (like sphere or rectangle into the world)
 	void addObject(shared_ptr<Object> object);
 
+	// deal with collision with sphere
+	bool intersectSphere(shared_ptr<Ray> ray, Triangle* &patch, float &distance);
+
+	Vector3 intersectTriangle(shared_ptr<Ray> ray, Triangle* &patch, float &distance);
+
 	Vector3 pathTracing(shared_ptr<Ray> ray);
 };

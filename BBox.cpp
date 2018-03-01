@@ -248,7 +248,6 @@ Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
 	if (ray == nullptr || ray->getDirection().magnitude() < EPISILON) 
 		return nullptr;
 
-	ray->incDepth();
 	Triangle* t = box.hitCloestTriangle(ray, distance);
 
 	return t;

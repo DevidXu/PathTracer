@@ -16,7 +16,7 @@ private:
 public:
 	// if no refract ray, remember to set direction of refract ray as 0.0f
 	virtual LightRate transmit(
-		Triangle* triangle,
+		Vector3 normal,
 		Vector3* hitPoint,
 		Ray* ray,
 		shared_ptr<Ray> refractRay
@@ -35,7 +35,7 @@ private:
 
 public:
 	virtual LightRate transmit(
-		Triangle* triangle, 
+		Vector3 normal, 
 		Vector3* hitPoint, 
 		Ray* ray,
 		shared_ptr<Ray> refractRay
@@ -50,7 +50,7 @@ private:
 
 public:
 	virtual LightRate transmit(
-		Triangle* triangle, 
+		Vector3 normal,
 		Vector3* hitPoint, 
 		Ray* ray,
 		shared_ptr<Ray> refractRay
@@ -78,7 +78,7 @@ public:
 	}
 
 	virtual LightRate transmit(
-		Triangle* triangle, 
+		Vector3 normal, 
 		Vector3* hitPoint, 
 		Ray* ray,
 		shared_ptr<Ray> refractRay

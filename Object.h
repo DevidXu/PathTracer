@@ -62,6 +62,9 @@ public:
 		return shape->getMesh();
 	}
 
+	Vector3 getCenter() {
+		return shape->getCenter();
+	}
 	
 	shared_ptr<Material> getMaterial() { return material; }
 

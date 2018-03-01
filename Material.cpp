@@ -3,14 +3,13 @@
 
 // calculate the transmited ray for diffuse material
 LightRate Diff::transmit(
-	Triangle* triangle, 
+	Vector3 normal, 
 	Vector3* hitPoint, 
 	Ray* ray, 
 	shared_ptr<Ray> refractRay
 ) {
 	// calculate a point randomly on the hemisphere and use as outward direction of ray
 
-	Vector3 normal = triangle->getNormal();
 	float theta1, theta2;
 
 	bool sameHemis = true;	// used to judge the random reflected ray and in-ray on the different hemisphere
@@ -35,13 +34,13 @@ LightRate Diff::transmit(
 
 // calculate the transmited ray for specular material (total reflect)
 LightRate Spec::transmit(
-	Triangle* triangle, 
+	Vector3 normal, 
 	Vector3* hitPoint, 
 	Ray* ray,
 	shared_ptr<Ray> refractRay
 ) {
-	float length=(triangle->getNormal()).dot(ray->getDirection());
-	Vector3 direction = triangle->getNormal()*length * 2 - ray->getDirection();
+	float length=(normal).dot(ray->getDirection());
+	Vector3 direction = normal*length * 2 - ray->getDirection();
 	direction = direction * (-1.0f);  // calculate the outward ray direction
 
 	ray->setOrigin(*hitPoint);
@@ -56,7 +55,7 @@ LightRate Spec::transmit(
 // calculate the transmited ray for reflective material, it will contain the reflect ray and refract ray
 // new ray: refractRay is added into the scene
 LightRate Refl::transmit(
-	Triangle* triangle, 
+	Vector3 normal, 
 	Vector3* hitPoint, 
 	Ray* ray,
 	shared_ptr<Ray> refractRay
@@ -66,10 +65,10 @@ LightRate Refl::transmit(
 	ray->setOrigin(*hitPoint);
 	refractRay->setOrigin(*hitPoint);
 
-	float dot = ray->getDirection().dot(triangle->getNormal());
-	Vector3 reflect_direction = ray->getDirection() - triangle->getNormal()*dot * 2;
+	float dot = ray->getDirection().dot(normal);
+	Vector3 reflect_direction = ray->getDirection() - normal*dot * 2;
 
-	Vector3 n = triangle->getNormal();
+	Vector3 n = normal;
 	Vector3 nl = n.dot(ray->getDirection()) < 0 ? n : n * -1;
 	bool into = n.dot(nl) > 0;
 	float nnt = into ? 1.0f / refractivity : refractivity, ddn = ray->getDirection().dot(nl), cos2t;

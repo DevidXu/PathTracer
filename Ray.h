@@ -57,9 +57,9 @@ public:
 
 	void incDepth() { depth += 1; }
 
-	void setOrigin(Vector3 o);
+	void setOrigin(Vector3 o, bool push = true);
 
-	void setDirection(Vector3 d);
+	void setDirection(Vector3 d, bool push = true);
 
 	void setIntensity(float i) {
 		_ASSERT(i <= 1.0f);
@@ -83,7 +83,7 @@ public:
 	}
 
 	LightRate transmit(
-		Triangle* triangle, 
+		Vector3 normal, 
 		Vector3* hitPoint, 
 		shared_ptr<Material> material, 
 		shared_ptr<Ray> refractRay

@@ -49,13 +49,90 @@ void World::initialize() {
 }
 
 
+bool World::intersectSphere(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
+	// deal with the sphere
+	if (patch == nullptr || !patch->getInfinite()) return false;
+
+	Vector3 oc = ray->getOrigin() - patch->getOwner()->getCenter();
+	float dotOCD = ray->getDirection().dot(oc);
+
+	if (dotOCD > 0) {
+		patch = nullptr;
+		return false;
+	}
+
+	float dotOC = oc.dot(oc);
+	float radius = patch->getOwner()->getShape()->getRadius();;
+	_ASSERT(radius != 0.0f);
+	float discriminant = dotOCD * dotOCD - dotOC + pow(radius,2);
+
+	if (discriminant < 0) {
+		patch = nullptr;
+		return false;
+	}
+	else {
+		if (discriminant < EPISILON) {
+			if (-dotOCD < EPISILON) {
+				patch = nullptr;
+				return false;
+			}
+			else distance = -dotOCD;
+		}
+		else
+		{
+			discriminant = sqrt(discriminant);
+			float t0 = -dotOCD - discriminant;
+			float t1 = -dotOCD + discriminant;
+			if (t0 < EPISILON)
+				t0 = t1;
+			distance = t0;
+		}
+	}
+
+
+	return true;
+}
+
+
+// This function get the intrsect triangle with the ray. Special process with sphere shape
+Vector3 World::intersectTriangle(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
+	// find the triangle face that intersect with the ray
+	// if no hit, return; if hit sphere, further judge, if normal, go
+	ray->incDepth();
+
+	do {
+		distance = MAX_DIS;
+		patch = bbox->intersect(ray, distance);
+		if (patch != nullptr && patch->getOwner()->getName() == "Glass Ball") {
+			int k = 1;
+		}
+		if (patch == nullptr) return Vector3();
+
+		if (intersectSphere(ray, patch, distance)) {
+			return (ray->getOrigin() + ray->getDirection()*distance - patch->getOwner()->getCenter()).normalize();
+		}
+		else {
+			if (patch != nullptr)
+				return patch->getNormal();
+			else {
+				// hit virtual triangle, continue and no add depth
+				ray->setOrigin(ray->getOrigin() + ray->getDirection()*distance, false);
+				ray->setDirection(ray->getDirection(), false);
+			}
+		}
+	} while (patch == nullptr);
+
+	return Vector3();
+}
+
+
 // This function will trace a given ray in the bounding box bbox, it will call itself recursively.
 Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 	float distance = MAX_DIS;
-	Debug->timing("Intersect", true);
-	Triangle* patch = bbox->intersect(ray, distance);	// find the triangle face that intersect with the ray
-	Debug->timing("Intersect", false);
+	Triangle* patch = nullptr;
+	Vector3 normal = intersectTriangle(ray, patch, distance);
+
 	if (patch == nullptr) return ENVIRONMENT_COLOR;		// ray is nullptr or no hit triangle
 
 	Object* obj = patch->getOwner();
@@ -81,9 +158,8 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	shared_ptr<Ray> refractRay = make_shared<Ray>(*ray);
 
 #ifdef GLOBAL
-	Debug->timing("Transmit", true);
-    LightRate rate = ray->transmit(patch, &hitPoint, obj->getMaterial(), refractRay);		// material decide the outward direction
-	Debug->timing("Transmit", false);
+	_ASSERT(normal.magnitude() > EPISILON);
+    LightRate rate = ray->transmit(normal, &hitPoint, obj->getMaterial(), refractRay);
 #endif
 
 	// put there to record the hit position
@@ -94,25 +170,12 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	return obj->getColor();
 #endif
 	Vector3 rayColor; // recursive process here to trace the ray
+
 	rayColor =
 		(rate.ray_rate == 0.0f ? 0.0f : pathTracing(ray))*rate.ray_rate 
 		+
 		(rate.refractRay_rate == 0.0f ? 0.0f : pathTracing(refractRay))*rate.refractRay_rate;
-	/*
-	if (rate.refractRay_rate == 0.0f)
-		rayColor = pathTracing(ray)*rate.ray_rate;	// if it is refractivity, ray means the reflective ray, refractRay means the refractRay
-	else {
-		// possibility of transmisison, reflective
-		float P = 0.25f + 0.5f*rate.ray_rate, RP = rate.ray_rate / P, TP = rate.refractRay_rate / (1 - P);
-		if (ray->getDepth() > 2) {
-			if (rand() / RAND_MAX < P)
-				rayColor = pathTracing(ray)*RP;
-			else
-				rayColor = pathTracing(refractRay)*TP;
-		}
-		else rayColor = pathTracing(ray)*rate.ray_rate + pathTracing(refractRay)*rate.refractRay_rate;
-	}
-	*/
+	
 	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
 
 	return obj->getEmissive() + rayColor;
@@ -139,7 +202,7 @@ RENDERSTATE World::renderScene() {
 		for (int j = 0; j < width; j++) {
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
-			if (i == 70 && j == 40)
+			if (i == 74 && j == 68)
 				int l = 1;
 			Debug->timing("Generate Ray", true);
 			camera->generateRay(rays, i, j);

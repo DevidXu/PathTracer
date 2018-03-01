@@ -59,7 +59,7 @@ void ObjectManager::initialize() {
 			"Glass Ball"
 			);
 
-		glass_ball->tessellate(4);
+		//glass_ball->tessellate(4);
 
 		// the rectangle of normal material
 		red_cube = make_shared<Object>(

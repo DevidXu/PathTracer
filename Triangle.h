@@ -15,6 +15,7 @@ private:
 	Vector3* normal[3]; // each point has a normal
 	Vector3 normalVector;
 	Object* owner;
+	bool infinite;		// judge whether is an infinite small triangle (useful for sphere)
 
 public:
 	Triangle() {
@@ -30,6 +31,8 @@ public:
 		vertex[1] = v1;
 		vertex[2] = v2;
 		owner = m;
+
+		infinite = false;
 	};
 
 	Triangle(Vector3* v0, Vector3* v1, Vector3* v2,
@@ -37,6 +40,8 @@ public:
 		normal[0] = n0;
 		normal[1] = n1;
 		normal[2] = n2;
+
+		infinite = false;
 
 		normalFaceUnit();
 	};
@@ -67,9 +72,22 @@ public:
 		owner = m;
 	}
 
-	Object* getOwner() { return owner; }
+	void setInfinite(bool m_Infinite) {
+		infinite = m_Infinite;
+	}
 
-	Vector3 getNormal() { return normalVector; }
+
+	Object* getOwner() { 
+		return owner; 
+	}
+
+	Vector3 getNormal() { 
+		return normalVector; 
+	}
+
+	bool getInfinite() {
+		return infinite;
+	}
 
 	float averageSideLength();
 

@@ -200,7 +200,7 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 	catch (exception e) {
 		LOGPRINT("Wrong radius to initialize the sphere");
 	}
-
+	/*
 	setCenter(Vector3(0.0f,0.0f,0.0f));
 	radius = m_radius;
 
@@ -237,6 +237,55 @@ Sphere::Sphere(Vector3 m_center, float m_radius) {
 	}
 
 	translate(m_center);
+	*/
+	Vector3 temp(m_radius, m_radius, m_radius);
+	Vector3 small = m_center - temp;
+	Vector3 big = m_center + temp;
+	setCenter(m_center);
+	radius = m_radius;
+
+	Vector3 *v[8];
+	Vector3 *n[8];
+	v[0] = new Vector3(small);
+	v[1] = new Vector3(big.value[0], small.value[1], small.value[2]);
+	v[2] = new Vector3(big.value[0], big.value[1], small.value[2]);
+	v[3] = new Vector3(small.value[0], big.value[1], small.value[2]);
+	v[4] = new Vector3(small.value[0], small.value[1], big.value[2]);
+	v[5] = new Vector3(big.value[0], small.value[1], big.value[2]);
+	v[6] = new Vector3(big);
+	v[7] = new Vector3(small.value[0], big.value[1], big.value[2]);
+
+	for (int i = 0; i < 8; i++) {
+		float k[3] = { 0.0f, 0.0f, 0.0f };
+		for (int j = 0; j < 3; j++) {
+			if (v[i]->value[j] < big.value[j]) k[j] = -1.0f;
+			else k[j] = 1.0f;
+		}
+
+		n[i] = new Vector3(k[0], k[1], k[2]);
+		n[i]->normalize();
+	}
+
+	int index[36] = { 0,1,4,1,5,4,1,2,6,1,6,5,2,3,7,2,7,6,4,7,3,0,4,3,4,5,6,4,6,7,1,0,3,2,1,3 };
+
+	for (int i = 0; i < 8; i++) {
+		vertexs.push_back(v[i]);
+		normals.push_back(n[i]);
+	}
+
+	for (int i = 0; i < 12; i++) {
+		Triangle* triangle = new Triangle(
+			v[index[i * 3]],
+			v[index[i * 3 + 1]],
+			v[index[i * 3 + 2]],
+			n[index[i * 3]],
+			n[index[i * 3 + 1]],
+			n[index[i * 3 + 2]]
+		);
+
+		triangle->setInfinite(true);
+		meshes.push_back(triangle);
+	}
 }
 
 

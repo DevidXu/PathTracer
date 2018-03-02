@@ -100,7 +100,8 @@ void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 	_ASSERT(width != 0);
 
 	try {
-		postProcess(begin, DENOISE);
+		// if sample num is enough, there is no need to denoise
+		//postProcess(begin, DENOISE);
 		saveBitmap(name, mark, width, height, begin);
 	}
 	catch (exception e) {

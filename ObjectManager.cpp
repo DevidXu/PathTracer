@@ -68,7 +68,7 @@ void ObjectManager::initialize() {
 				Vector3(2.1f, 3.5f, 2.0f) //Vector3(1.3f, 3.3f, 1.6f)
 				),
 			make_shared<Spec>(),
-			Vector3(0.99f, 0.99f, 0.99f),
+			Vector3(0.999f, 0.999f, 0.999f),
 			//make_shared<Diff>(),
 			//Vector3(0.97f, 0.1f, 0.2f),
 			Vector3(0.0f, 0.0f, 0.0f),
@@ -83,7 +83,7 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(),
 			Vector3(0.0f, 0.0f, 0.0f),
-			Vector3(17.0f, 17.0f, 17.0f),
+			Vector3(21.0f, 21.0f, 21.0f),
 			"Light"
 			);
 	}

@@ -39,12 +39,11 @@ LightRate Spec::transmit(
 	Ray* ray,
 	shared_ptr<Ray> refractRay
 ) {
-	float length=(normal).dot(ray->getDirection());
-	Vector3 direction = normal*length * 2 - ray->getDirection();
-	direction = direction * (-1.0f);  // calculate the outward ray direction
+	float dot=ray->getDirection().dot(normal);
+	Vector3 direction = ray->getDirection() - normal * dot * 2;
 
-	ray->setOrigin(*hitPoint);
-	ray->setDirection(direction);
+	ray->setOrigin(*hitPoint, false);
+	ray->setDirection(direction, false);
 
 	refractRay->setDirection(Vector3());
 
@@ -66,7 +65,7 @@ LightRate Refl::transmit(
 	refractRay->setOrigin(*hitPoint);
 
 	float dot = ray->getDirection().dot(normal);
-	Vector3 reflect_direction = ray->getDirection() - normal*dot * 2;
+	Vector3 reflect_direction = ray->getDirection() - normal * dot * 2;
 
 	Vector3 n = normal;
 	Vector3 nl = n.dot(ray->getDirection()) < 0 ? n : n * -1;

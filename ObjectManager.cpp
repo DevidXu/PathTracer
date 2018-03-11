@@ -55,7 +55,7 @@ void ObjectManager::initialize() {
 			make_shared<Refl>(GLASS_REFRACTIVITY),
 			//make_shared<Spec>(),
 			Vector3(0.999f, 0.999f, 0.999f),
-			Vector3(0.0f, 0.0f, 0.0f),
+			Vector3(0.125f, 0.695f, 0.664f),
 			"Glass Ball"
 			);
 
@@ -67,7 +67,8 @@ void ObjectManager::initialize() {
 				Vector3(2.0f, 0.5f, 0.0f), //Vector3(1.0f, 2.3f, 0.0f),
 				Vector3(2.1f, 3.5f, 2.0f) //Vector3(1.3f, 3.3f, 1.6f)
 				),
-			make_shared<Spec>(),
+			//make_shared<Spec>(),
+			make_shared<Refl>(GLASS_REFRACTIVITY),
 			Vector3(0.999f, 0.999f, 0.999f),
 			//make_shared<Diff>(),
 			//Vector3(0.97f, 0.1f, 0.2f),

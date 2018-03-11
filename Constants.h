@@ -9,10 +9,10 @@ These variables cannot be changed
 
 #define SAMPLE_RATE 0.0001
 
-#define HEIGHT		512
-#define WIDTH		512
+#define HEIGHT		256
+#define WIDTH		256
 
-#define SAMPLE_NUM		5000  // must be times of 4
+#define SAMPLE_NUM		24  // must be times of 4
 
 //#define TESSELLATE		1
 

@@ -21,17 +21,15 @@ void Cube::setCube(Vector3 s, Vector3 l) {
 
 void Cube::divideCube() {
 	if (left != nullptr) return;
-
-	Vector3 mid = (small + large)*0.5;
 	
 	int dimension = int(lm);
 	Vector3 t_small = small, t_large = large;
 	try {
-		t_large.value[dimension] = mid[dimension];
-		left = new Cube(small, t_large, LayerMark((lm + 1) % 3));
+		t_large.value[dimension] = mid;
+		left = new Cube(small, t_large);
 
-		t_small.value[dimension] = mid[dimension];
-		right = new Cube(t_small, large, LayerMark((lm + 1) % 3));
+		t_small.value[dimension] = mid;
+		right = new Cube(t_small, large);
 	}
 	catch (exception e) {
 		LOGPRINT("Meet error when dividing the cube");
@@ -42,20 +40,84 @@ void Cube::divideCube() {
 }
 
 
+// when insert triangle list, we need to determine the layermark(use x?y?z to divide) as
+// well as whether sub-cube is needed.
+void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
+	if (triangleList.size() <= 1) {
+		for (auto ele : triangleList)
+			triangle_ptr.push_back(ele);
+		return;
+	}
+
+	float variance[3], mean[3];
+	for (int i = 0; i < 3; i++) {
+		variance[i] = 0;
+		mean[i] = 0;
+	}
+
+	// calculate the mean value of each axis
+	for (auto& triangle : triangleList)
+		for (int i = 0; i < 3; i++)
+			mean[i] += triangle->getCentroid().value[i];
+
+	for (int i = 0; i < 3; i++)
+		mean[i] /= triangleList.size();
+
+	for (auto& triangle : triangleList)
+		for (int i = 0; i < 3; i++)
+			variance[i] += float(pow((triangle->getCentroid().value[i] - mean[i]), 2));
+
+	// determine the axis based on which to choose the variance list
+	float max = 0.0f;
+	for (int i = 0; i < 3; i++) {
+		variance[i] /= triangleList.size();
+		if (variance[i] > max) {
+			max = variance[i];
+			lm = LayerMark(i);
+			mid = mean[i];
+		}
+	}
+
+	vector<Triangle*> leftSequence, rightSequence;
+	leftSequence.clear();
+	rightSequence.clear();
+
+	while (triangleList.empty() == false) {
+		Triangle* triangle = triangleList.at(triangleList.size() - 1);
+		triangleList.pop_back();
+
+		if (triangle->smallerThan(mid, lm)) {
+			leftSequence.push_back(triangle);
+			continue;
+		}
+
+		if (triangle->largerThan(mid, lm)) {
+			rightSequence.push_back(triangle);
+			continue;
+		}
+
+		triangle_ptr.push_back(triangle);
+	}
+
+	if (leftSequence.size() > 0 || rightSequence.size() > 0) {
+		divideCube();
+		left->insertTriangleList(leftSequence);
+		right->insertTriangleList(rightSequence);
+	}
+
+	return;
+}
+
+
 void Cube::insertTriangle(Triangle* triangle) {
 	bool within = true;
-	Vector3 mid = (small + large)*0.5;
 
-	if (triangle->smallerThan(mid[lm], lm)) {
-		divideCube();
-		_ASSERT(left != nullptr);
+	if (left && triangle->smallerThan(mid, lm)) {
 		left->insertTriangle(triangle);
 		return;
 	}
 
-	if (triangle->largerThan(mid[lm], lm)) {
-		divideCube();
-		_ASSERT(right != nullptr);
+	if (right && triangle->largerThan(mid, lm)) {
 		right->insertTriangle(triangle);
 		return;
 	}
@@ -168,36 +230,47 @@ Triangle* Cube::hitCloestTriangle(const shared_ptr<Ray> ray, float &distance) {
 	Triangle* min_Triangle = intersect(ray, &min_distance); // find the intersected triangles in the current cube size
 	min_distance = MIN(distance, min_distance);
 
+	// test the side that intersects first, save some time
 	if (left && left->hitRay(ray, cube_distance) && cube_distance < min_distance) {
-		float t_ld = MAX_DIS;
-		Triangle* t_left_triangle = left->hitCloestTriangle(ray, t_ld);
+		float t_d = MAX_DIS;
+		Triangle* temp_triangle = left->hitCloestTriangle(ray, t_d);
 
-		if (t_ld < min_distance) {
-			min_distance = t_ld;
-			min_Triangle = t_left_triangle;
+		if (t_d < min_distance) {
+			min_distance = t_d;
+			min_Triangle = temp_triangle;
 		}
 	}
 
 	if (right && right->hitRay(ray, cube_distance) && cube_distance < min_distance) {
-		float t_rd = MAX_DIS;
-		Triangle* t_right_triangle = right->hitCloestTriangle(ray, t_rd);
+		float t_d = MAX_DIS;
+		Triangle* temp_triangle = right->hitCloestTriangle(ray, t_d);
 
-		if (t_rd < min_distance) {
-			min_distance = t_rd;
-			min_Triangle = t_right_triangle;
+		if (t_d < min_distance) {
+			min_distance = t_d;
+			min_Triangle = temp_triangle;
 		}
 	}
 
 	distance = min_distance;
-
 	return min_Triangle;
 
+}
+
+
+int Cube::maxDepth() {
+	if (left == nullptr) return 1;
+
+	int leftDepth = left->maxDepth();
+	int rightDepth = right->maxDepth();
+
+	return leftDepth > rightDepth ? leftDepth + 1 : rightDepth + 1;
 }
 
 
 BBox::BBox() {
 	small = Vector3(0.0f, 0.0f, 0.0f);
 	large = Vector3(1.0f, 1.0f, 1.0f);
+	triangleList.clear();
 
 	box.setCube(small, large);
 }
@@ -206,6 +279,7 @@ BBox::BBox() {
 BBox::BBox(Vector3 s, Vector3 l) {
 	small = s;
 	large = l;
+	triangleList.clear();
 
 	box.setCube(small, large);
 }
@@ -223,7 +297,15 @@ void BBox::addTriangle(Triangle* triangle) {
 			throw("Triangle is not in the box domain.");
 	}
 
-	box.insertTriangle(triangle);
+	triangleList.push_back(triangle);
+}
+
+
+void BBox::initializeCube() {
+	LOGPRINT("Triangle number:    " + to_string(triangleList.size()));
+
+	box.insertTriangleList(triangleList);
+	return;
 }
 
 
@@ -238,8 +320,6 @@ void BBox::addMesh(Mesh mesh) {
 		LOGPRINT(e.what());
 	}
 
-	LOGPRINT("Mesh is loaded successfully.");
-
 	return;
 }
 
@@ -251,4 +331,9 @@ Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
 	Triangle* t = box.hitCloestTriangle(ray, distance);
 
 	return t;
+}
+
+
+int BBox::getDepth() {
+	return box.maxDepth();
 }

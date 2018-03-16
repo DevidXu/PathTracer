@@ -40,3 +40,6 @@ public:
 
 	void generateRay(shared_ptr<PixelRays> rays, int height, int width);
 };
+
+// generate ray samples on each pixel
+Vector2 hammersley2d(int i, int N); 

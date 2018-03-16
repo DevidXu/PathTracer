@@ -12,7 +12,7 @@ These variables cannot be changed
 #define HEIGHT		256
 #define WIDTH		256
 
-#define SAMPLE_NUM		24  // must be times of 4
+#define SAMPLE_NUM		48  // must be times of 4
 
 //#define TESSELLATE		1
 
@@ -24,11 +24,13 @@ These variables cannot be changed
 
 #define CAMERA_POSITION Vector3(BOX_LENGTH - 0.1f, 2.0f, 2.2f)
 #define CAMERA_FORWARD	Vector3(-1.0f, 0.0f, 0.0f)
+#define HAMMERSLEY		true // Hammersley sample for rays in each pixel
 
 #define ANGLEVIEWWIDTH	53
 #define ANGLEVIEWHEIGHT 53
 
-#define MAX_DEPTH		5
+#define SMALL_DEPTH		true
+#define MAX_DEPTH		6
 #define DARK_DEPTH		10
 
 #define GLASS_REFRACTIVITY	1.5f

@@ -13,6 +13,7 @@ class Triangle {
 private:
 	Vector3 * vertex[3];
 	Vector3* normal[3]; // each point has a normal
+	Vector3 centroid;
 	Vector3 normalVector;
 	Object* owner;
 	bool infinite;		// judge whether is an infinite small triangle (useful for sphere)
@@ -33,6 +34,7 @@ public:
 		owner = m;
 
 		infinite = false;
+		calculateCentroid();
 	};
 
 	Triangle(Vector3* v0, Vector3* v1, Vector3* v2,
@@ -44,11 +46,13 @@ public:
 		infinite = false;
 
 		normalFaceUnit();
+		calculateCentroid();
 	};
 
 	// used to judge whether the triangle is on one side of the side on some dimension
 	bool smallerThan(float mid, int dimension);
 	bool largerThan(float mid, int dimension);
+	void calculateCentroid();
 
 	bool isTriangle();
 
@@ -56,6 +60,7 @@ public:
 		vertex[0] = v0;
 		vertex[1] = v1;
 		vertex[2] = v2;
+		calculateCentroid();
 	}
 
 	void setNormal(Vector3* n0, Vector3* n1, Vector3* n2) {
@@ -85,6 +90,10 @@ public:
 		return normalVector; 
 	}
 
+	Vector3 getCentroid() {
+		return centroid;
+	}
+
 	bool getInfinite() {
 		return infinite;
 	}
@@ -111,6 +120,9 @@ public:
 		float length, 
 		Vector3 center = Vector3(0.0f, 0.0f, 0.0f)
 	); // expand one triangle to three
+
+	// when ray collides with a ball, it should give specialized process
+	static bool intersectSphere(shared_ptr<Ray> ray, Triangle* &patch, float &distance);
 };
 
 typedef std::vector<Triangle*> Mesh;

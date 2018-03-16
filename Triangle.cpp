@@ -1,4 +1,5 @@
 #include "Triangle.h"
+#include "Object.h"
 
 bool Triangle::smallerThan(float mid, int dimension) {
 	for (int i = 0; i < 3; i++)
@@ -13,6 +14,12 @@ bool Triangle::largerThan(float mid, int dimension) {
 		if ((*vertex[i])[dimension] < mid) return false;
 	
 	return true;
+}
+
+
+void Triangle::calculateCentroid() {
+	centroid = (*vertex[0] + *vertex[1] + *vertex[2]) / 3.0f;
+	return;
 }
 
 
@@ -124,4 +131,48 @@ void Triangle::tessellate(Triangle** tri, Vector3** v, Vector3** n, float length
 	normalFaceUnit();
 
 	return;
+}
+
+
+bool Triangle::intersectSphere(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
+	// deal with the sphere
+	if (patch == nullptr || !patch->getInfinite()) return false;
+
+	Vector3 oc = ray->getOrigin() - patch->getOwner()->getCenter();
+	float dotOCD = ray->getDirection().dot(oc);
+
+	if (dotOCD > 0) {
+		patch = nullptr;
+		return false;
+	}
+
+	float dotOC = oc.dot(oc);
+	float radius = patch->getOwner()->getShape()->getRadius();;
+	_ASSERT(radius != 0.0f);
+	float discriminant = dotOCD * dotOCD - dotOC + pow(radius, 2);
+
+	if (discriminant < 0) {
+		patch = nullptr;
+		return false;
+	}
+	else {
+		if (discriminant < EPISILON) {
+			if (-dotOCD < EPISILON) {
+				patch = nullptr;
+				return false;
+			}
+			else distance = -dotOCD;
+		}
+		else
+		{
+			discriminant = sqrt(discriminant);
+			float t0 = -dotOCD - discriminant;
+			float t1 = -dotOCD + discriminant;
+			if (t0 < EPISILON)
+				t0 = t1;
+			distance = t0;
+		}
+	}
+
+	return true;
 }

@@ -79,7 +79,7 @@ void Raster::Draw() {
 	delete [] temp;
 
 
-	LOGPRINT("Finish rendering the image. Check the path for result\n");
+	LOGPRINT("Finish rendering the image. Check the path for result");
 
 	char buffer[MAX_PATH] = "";
 	_getcwd(buffer, MAX_PATH);

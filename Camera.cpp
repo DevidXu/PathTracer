@@ -1,5 +1,22 @@
 #include "Camera.h"
 
+
+float radicalInverse_VdC(int bits) {
+	float sum = 0.0f, parameter = 1.0f;
+	while (bits > 0) {
+		int left = bits % 2;
+		bits /= 2;
+		parameter /= 2.0f;
+		sum += left * parameter;
+	}
+	return sum;
+}
+
+Vector2 hammersley2d(int i, int N) {
+	return Vector2(float(i) / float(N), radicalInverse_VdC(i));
+}
+
+
 Camera::Camera() {
 	raster = make_shared<Raster>(HEIGHT, WIDTH); // initialize the rasetr (each pixel)
 
@@ -71,6 +88,30 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 	float screen_width = tan(angleView.value[0] / 2) * 2;
 	float screen_height = tan(angleView.value[1] / 2) * 2;
 
+#if HAMMERSLEY
+	for (int i = 0; i < num; i++) {
+		shared_ptr<Ray> ray_ptr = rays->at(i);
+		Vector2 hammersleyPoint = hammersley2d(i, num);
+		float pixel_width = hammersleyPoint.value[0];
+		float pixel_height = hammersleyPoint.value[1];
+
+		float ray_width = screen_width * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
+		float ray_height = screen_height * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
+		float yaw = atan(ray_width);
+		float pitch = atan(ray_height / sqrt(1.0f + pow(ray_width, 2)));
+
+		try {
+			Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
+			ray_ptr->setOrigin(position);
+			ray_ptr->setDirection(direction);
+			ray_ptr->setIntensity(1.0f);
+		}
+		catch (exception e) {
+			throw("Meet error when generating the direction of sample rays.");
+		}
+	}
+	
+#else
 	for (int i = 0; i < num / 4; i++)
 		for (int row = 0; row<2; row++)
 			for (int column = 0; column<2; column++) {
@@ -83,10 +124,7 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 				float ray_height = screen_height * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
 				float yaw = atan(ray_width);
 				float pitch = atan(ray_height/sqrt(1.0f+pow(ray_width,2)));
-				/*
-				float yaw = angleView.value[0] * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
-				float pitch = angleView.value[1] * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
-				*/
+
 				try {
 					Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
 					ray_ptr->setOrigin(position);
@@ -97,7 +135,7 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 					throw("Meet error when generating the direction of sample rays.");
 				}
 			}
-
+#endif
 	return;
 }
 

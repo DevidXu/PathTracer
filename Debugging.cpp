@@ -19,7 +19,7 @@ Debugging::~Debugging() {
 }
 
 
-void Debugging::print(const char* c) {
+void Debugging::print(string c) {
 	storage << c << "\n";
 }
 
@@ -73,6 +73,8 @@ void Debugging::timeCountStart() {
 
 void Debugging::timeCountEnd(){	
 	system("cls");
+	end = time(NULL);
+	LOGPRINT("Total time consumed:" + to_string(int((float(end - start))*1.0f)) + "s");
 	cout << "Rendering Progress: 100%" << endl;
 	cout << "Image has been rendered! Check the local image." << endl;
 }

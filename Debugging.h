@@ -23,7 +23,7 @@ private:
 	ofstream storage;
 
 	// used to calculate progress
-	time_t start, current;
+	time_t start, current, end;
 
 	// calculate time consumed for each module
 	map<string, clock_t> timing_map;
@@ -38,7 +38,7 @@ public:
 	friend Singleton <Debugging>;
 	~Debugging();
 
-	void print(const char* c);
+	void print(string c);
 
 	void setSample(int i, int j, bool s);
 

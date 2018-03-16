@@ -17,7 +17,7 @@ World::World() {
 
 	objects.clear();
 
-	LOGPRINT("This is the realization of a path tracer!");
+	LOGPRINT("A ray tracer completed by Dewei Xu:");
 }
 
 World::~World() {
@@ -25,6 +25,7 @@ World::~World() {
 }
 
 
+// add all objects into the scene and construct the bounding box with small depth
 void World::initialize() {
 
 	ObjectManager::getInstance()->initialize();
@@ -33,12 +34,17 @@ void World::initialize() {
 	// if all generated successfully, this part will add objects by adding triangles into the bounding box 
 	// (triangle contains pointers to vertexs)
 	try {
+		LOGPRINT("Mesh of all objects loaded here:");
 		for (auto obj : *objList) {
 			if (obj == nullptr)
 				throw("No pointer pointing to the shape created before.");
 
 			addObject(obj);
 		}
+
+		bbox->initializeCube();
+
+		LOGPRINT("Bounding box depth: " + to_string(bbox->getDepth()));
 	}
 	catch (exception e) {
 		LOGPRINT(e.what());
@@ -49,53 +55,8 @@ void World::initialize() {
 }
 
 
-bool World::intersectSphere(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
-	// deal with the sphere
-	if (patch == nullptr || !patch->getInfinite()) return false;
-
-	Vector3 oc = ray->getOrigin() - patch->getOwner()->getCenter();
-	float dotOCD = ray->getDirection().dot(oc);
-
-	if (dotOCD > 0) {
-		patch = nullptr;
-		return false;
-	}
-
-	float dotOC = oc.dot(oc);
-	float radius = patch->getOwner()->getShape()->getRadius();;
-	_ASSERT(radius != 0.0f);
-	float discriminant = dotOCD * dotOCD - dotOC + pow(radius,2);
-
-	if (discriminant < 0) {
-		patch = nullptr;
-		return false;
-	}
-	else {
-		if (discriminant < EPISILON) {
-			if (-dotOCD < EPISILON) {
-				patch = nullptr;
-				return false;
-			}
-			else distance = -dotOCD;
-		}
-		else
-		{
-			discriminant = sqrt(discriminant);
-			float t0 = -dotOCD - discriminant;
-			float t1 = -dotOCD + discriminant;
-			if (t0 < EPISILON)
-				t0 = t1;
-			distance = t0;
-		}
-	}
-
-
-	return true;
-}
-
-
 // This function get the intrsect triangle with the ray. Special process with sphere shape
-Vector3 World::intersectTriangle(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
+Vector3 World::intersectTest(shared_ptr<Ray> ray, Triangle* &patch, float &distance) {
 	// find the triangle face that intersect with the ray
 	// if no hit, return; if hit sphere, further judge, if normal, go
 	ray->incDepth();
@@ -108,7 +69,7 @@ Vector3 World::intersectTriangle(shared_ptr<Ray> ray, Triangle* &patch, float &d
 		}
 		if (patch == nullptr) return Vector3();
 
-		if (intersectSphere(ray, patch, distance)) {
+		if (Triangle::intersectSphere(ray, patch, distance)) {
 			return (ray->getOrigin() + ray->getDirection()*distance - patch->getOwner()->getCenter()).normalize();
 		}
 		else {
@@ -131,7 +92,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 	float distance = MAX_DIS;
 	Triangle* patch = nullptr;
-	Vector3 normal = intersectTriangle(ray, patch, distance);
+	Vector3 normal = intersectTest(ray, patch, distance);
 
 	if (patch == nullptr) return ENVIRONMENT_COLOR;		// ray is nullptr or no hit triangle
 
@@ -146,6 +107,9 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 	Vector3 color = obj->getColor();
 	if (ray->getDepth() > MAX_DEPTH) {
+#if SMALL_DEPTH
+		return ENVIRONMENT_COLOR;
+#endif
 		if (ray->getDepth() > DARK_DEPTH)
 			return ENVIRONMENT_COLOR;
 
@@ -166,12 +130,7 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	if (obj->getColor().magnitude() == 0.0f) 
 		return obj->getEmissive();		// if meet the light source
 
-#ifndef GLOBAL
-	return obj->getColor();
-#endif
-	Vector3 rayColor; // recursive process here to trace the ray
-
-	rayColor =
+	Vector3 rayColor =
 		(rate.ray_rate == 0.0f ? 0.0f : pathTracing(ray))*rate.ray_rate 
 		+
 		(rate.refractRay_rate == 0.0f ? 0.0f : pathTracing(refractRay))*rate.refractRay_rate;
@@ -192,6 +151,10 @@ RENDERSTATE World::renderScene() {
 	Debug->timeCountStart();
 
 	Vector3 color;
+
+	LOGPRINT("Resolution-Height:  " + to_string(height));
+	LOGPRINT("Resolution-Width:   " + to_string(width));
+	LOGPRINT("Num of Rays/Pixel:  " + to_string(SAMPLE_NUM));
 
 #ifndef _OPENMP
 	LOGPRINT("OpenMP is not supported on your computer");
@@ -259,6 +222,8 @@ void World::addObject(shared_ptr<Object> object) {
 		LOGPRINT("Meet error when adding triangle mesh to the bounding box. The feature information is: ");
 		LOGPRINT(e.what());
 	}
+
+	LOGPRINT("    " + object->getName() + " is loaded successfully");
 
 	return;
 }

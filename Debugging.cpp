@@ -74,7 +74,8 @@ void Debugging::timeCountStart() {
 void Debugging::timeCountEnd(){	
 	system("cls");
 	end = time(NULL);
-	LOGPRINT("Total time consumed:" + to_string(int((float(end - start))*1.0f)) + "s");
+	LOGPRINT("Total time consumed:" + to_string(int((float(end - start))*1.0f)) + "s\n");
+
 	cout << "Rendering Progress: 100%" << endl;
 	cout << "Image has been rendered! Check the local image." << endl;
 }
@@ -148,6 +149,9 @@ void Debugging::recordPath(string name, Vector3* hitPoint) {
 }
 
 
+// used to monitor the time consumed by each module;
+// work by adding the name into the list of the monitored modules and measure the
+// difference between the start time and finish time
 void Debugging::timing(string moduleName, bool start) {
 #ifndef DEBUG
 	return; // this function will consume much time (almost 40% increase!)

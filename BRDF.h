@@ -12,9 +12,28 @@ private:
 	float reflectance;
 
 public:
+	BRDF(float rough, float reflect) :roughness(rough), reflectance(reflect) 
+	{
+		k = calculateIntegral();
+	}
+
+	float	getRoughness()					{ return roughness; }
+	float	getReflectance()				{ return reflectance; }
+
+	void	setRoughness(float rough)		{ roughness = rough; }
+	void	setReflectance(float reflect)	{ reflectance = reflect; }
+
+
+	float calculateIntegral();
+
 	// v:point to the surface
 	float getBRDF(Vector3 l, Vector3 v, Vector3 n);
 
 	// probability distribution function of BRDF
 	float getPDF(Vector3 l, Vector3 v, Vector3 n);
+
+	// employ BRDF introducted by Klayge
+	Vector3 diffReflectDir(Vector3 v, Vector3 n);
+	Vector2 hammersleyPoints(int i, int N);
+	Vector2 importanceSampling(Vector2 point);
 };

@@ -8,20 +8,49 @@
 #include "Ray.h"
 #include "Triangle.h"
 #include "Constants.h"
-
+#include "BRDF.h"
 
 class Material:public Singleton<Material> {
 private:
+	Vector3 color;		// this is the diffuse color for the material
+	Vector3 emissive;   // defines the self-shining color
+	Vector3 specular;   // defines the specular color (like metal or special shiny things) 
 
 public:
+	BRDF brdf;
+
 	// if no refract ray, remember to set direction of refract ray as 0.0f
-	virtual LightRate transmit(
+	Material(
+		Vector3 c = Vector3(), 
+		Vector3 e = Vector3(), 
+		Vector3 s = Vector3(), 
+		float rough = 0.0f, 
+		float reflect = 0.0f
+	):
+		color(c),emissive(e),specular(s), brdf(rough, reflect)
+	{
+
+	}
+
+	Vector3 getColor()		{ return color; }
+	Vector3 getEmissive()	{ return emissive; }
+	Vector3 getSpecular()	{ return specular; }
+	float	getRoughness()	{ return brdf.getRoughness(); }
+	float	getReflectance() { return brdf.getReflectance(); }
+
+	void	setColor(Vector3 c)		{ color = c; }
+	void	setEmissive(Vector3 e)	{ emissive = e; }
+	void	setSpecular(Vector3 s)	{ specular = s; }
+	void	setRoughness(float r)	{ brdf.setRoughness(r); }
+	void	setReflectance(float r) { brdf.setReflectance(r); }
+
+
+	virtual void transmit(
 		Vector3 normal,
 		Vector3* hitPoint,
-		Ray* ray,
-		shared_ptr<Ray> refractRay
+		Ray* ray
 	) {
-		return LightRate();
+		return;
 	}
 
 	virtual bool isRefl() {
@@ -34,11 +63,22 @@ class Diff :public Material {	// diffuse material
 private:
 
 public:
-	virtual LightRate transmit(
+	Diff(
+		Vector3 c = Vector3(), 
+		Vector3 e = Vector3(), 
+		Vector3 s = Vector3(), 
+		float rough = 0.0f, 
+		float reflect = 0.0f
+	):
+		Material(c, e, s, rough, reflect)
+	{
+	
+	}
+
+	virtual void transmit(
 		Vector3 normal, 
 		Vector3* hitPoint, 
-		Ray* ray,
-		shared_ptr<Ray> refractRay
+		Ray* ray
 	);
 
 	virtual bool isRefl() { return false; }
@@ -49,11 +89,22 @@ class Spec :public Material {	// specular material
 private:
 
 public:
-	virtual LightRate transmit(
+	Spec(
+		Vector3 c = Vector3(), 
+		Vector3 e = Vector3(), 
+		Vector3 s = Vector3(), 
+		float rough = 0.0f,
+		float reflect = 0.0f
+	):
+		Material(c, e, s, rough, reflect)
+	{
+
+	}
+
+	virtual void transmit(
 		Vector3 normal,
 		Vector3* hitPoint, 
-		Ray* ray,
-		shared_ptr<Ray> refractRay
+		Ray* ray
 	);
 
 	virtual bool isRefl() { return false; }
@@ -66,7 +117,16 @@ private:
 	float bounding_angle;		// the maximum angle that allows a ray to flow from the reflective object
 
 public:
-	Refl(float r = 0.0f) :refractivity(r) {
+	Refl(
+		float r = 0.0f, 
+		Vector3 c = Vector3(), 
+		Vector3 e = Vector3(), 
+		Vector3 s = Vector3(), 
+		float rough = 0.0f,
+		float reflect = 0.0f
+	) :
+		Material(c, e, s, rough, reflect), refractivity(r)
+	{
 		_ASSERT(r > 1.0f);
 		bounding_angle = asin(1 / r);
 	};
@@ -77,11 +137,10 @@ public:
 		return;
 	}
 
-	virtual LightRate transmit(
+	virtual void transmit(
 		Vector3 normal, 
 		Vector3* hitPoint, 
-		Ray* ray,
-		shared_ptr<Ray> refractRay
+		Ray* ray
 	);
 
 	virtual bool isRefl() { return true; }

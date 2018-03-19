@@ -9,6 +9,8 @@
 
 class Object;
 
+using namespace std;
+
 class Shape {
 protected:
 	std::vector<Vector3*> vertexs;
@@ -80,4 +82,22 @@ public:
 	virtual float getRadius() { return radius; }
 
 	virtual void tessellate(float iteration, Object* obj);
+};
+
+
+class Model :public Shape {
+private:
+
+public:
+	Model() {
+		setCenter(Vector3(0.0f, 0.0f, 0.0f));
+	}
+
+	Model(Vector3 center, string filename);
+
+	bool readFile(string filename);
+
+	virtual float getRadius() { return 0.0f; }
+
+	virtual void tessellate(float iterations, Object* obj) { return; }
 };

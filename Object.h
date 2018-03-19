@@ -15,14 +15,19 @@ private:
 	shared_ptr<Shape>		shape;
 	shared_ptr<Material>	material;
 
-	Vector3 emissive, color;
 	string name;
 
 public:
-	Vector3 setEmissive(Vector3 e)	{ emissive = e; }
-	Vector3 setColor(Vector3 c)		{ color = c; }
-	Vector3 getEmissive()			{ return emissive; }
-	Vector3 getColor()				{ return color; }
+
+	void	setEmissive(Vector3 e)	{ material->setEmissive(e); }
+	void	setColor(Vector3 c)		{ material->setColor(c); }
+	void	setSpecular(Vector3 s)	{ material->setSpecular(s); }
+	void	setRoughness(float r)	{ material->setRoughness(r); }
+
+	Vector3 getEmissive()			{ return material->getEmissive(); }
+	Vector3 getColor()				{ return material->getColor(); }
+	Vector3 getSpecular()			{ return material->getSpecular(); }
+	float	getRoughness()			{ return material->getRoughness(); }
 	string	getName()				{ return name; }
 
 
@@ -45,11 +50,9 @@ public:
 	};
 	
 
-	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material, Vector3 c, Vector3 e, string n = "Object") {
+	Object(shared_ptr<Shape> m_shape, shared_ptr<Material> m_material, string n = "Object") {
 		shape = m_shape;
 		material = m_material;
-		color = c;
-		emissive = e;
 		name = n;
 
 		shape->setOwner(this);

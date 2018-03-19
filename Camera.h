@@ -36,7 +36,7 @@ public:
 
 	// calculate the angle if the camera rotate a certain angle
 	// it will simplify the calculation for ray direction
-	Vector3 rotate(Vector3 eulerAngle); // the mid value should be 0 to add dead lock; only yaw and pitch; unit is degree
+	Vector3 rotate(Vector3 eulerAngle); // the mid value should be 0 to add dead lock; only yaw and pitch; unit is 0-pi
 
 	void generateRay(shared_ptr<PixelRays> rays, int height, int width);
 };

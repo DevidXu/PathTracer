@@ -42,6 +42,8 @@ void World::initialize() {
 			addObject(obj);
 		}
 
+		LOGPRINT("\n");
+
 		bbox->initializeCube();
 
 		LOGPRINT("Bounding box depth: " + to_string(bbox->getDepth()));
@@ -119,21 +121,14 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 		color = color * (1.0f / p);  // in such case the depth is too big, if you don't enlarge the color, the effect will not be obvious
 	}
 
-	shared_ptr<Ray> refractRay = make_shared<Ray>(*ray);
-
-#ifdef GLOBAL
 	_ASSERT(normal.magnitude() > EPISILON);
-    LightRate rate = ray->transmit(normal, &hitPoint, obj->getMaterial(), refractRay);
-#endif
+    ray->transmit(normal, &hitPoint, obj->getMaterial());
 
 	// put there to record the hit position
-	if (obj->getColor().magnitude() == 0.0f) 
-		return obj->getEmissive();		// if meet the light source
+	//if (obj->getColor().magnitude() == 0.0f) 
+	//	return obj->getEmissive();		// if meet the light source
 
-	Vector3 rayColor =
-		(rate.ray_rate == 0.0f ? 0.0f : pathTracing(ray))*rate.ray_rate 
-		+
-		(rate.refractRay_rate == 0.0f ? 0.0f : pathTracing(refractRay))*rate.refractRay_rate;
+	Vector3 rayColor = pathTracing(ray);
 	
 	for (int i = 0; i < 3; i++) rayColor.value[i] *= color.value[i];
 
@@ -152,21 +147,21 @@ RENDERSTATE World::renderScene() {
 
 	Vector3 color;
 
-	LOGPRINT("Resolution-Height:  " + to_string(height));
-	LOGPRINT("Resolution-Width:   " + to_string(width));
+	LOGPRINT("Resolution--Height: " + to_string(height));
+	LOGPRINT("Resolution--Width:  " + to_string(width));
 	LOGPRINT("Num of Rays/Pixel:  " + to_string(SAMPLE_NUM));
 
 #ifndef _OPENMP
 	LOGPRINT("OpenMP is not supported on your computer");
 #else
+	LOGPRINT("OpenMP is utilized for accelerating the parallel process.");
 #pragma omp parallel for  schedule(dynamic, 1) private(color)
 #endif
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
-			if (i == 74 && j == 68)
-				int l = 1;
+
 			Debug->timing("Generate Ray", true);
 			camera->generateRay(rays, i, j);
 			Debug->timing("Generate Ray", false);
@@ -223,7 +218,7 @@ void World::addObject(shared_ptr<Object> object) {
 		LOGPRINT(e.what());
 	}
 
-	LOGPRINT("    " + object->getName() + " is loaded successfully");
+	LOGPRINT("    " + object->getName() + " is loaded successfully;");
 
 	return;
 }

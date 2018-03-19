@@ -82,11 +82,10 @@ public:
 		positions.push_back(position);
 	}
 
-	LightRate transmit(
+	void transmit(
 		Vector3 normal, 
 		Vector3* hitPoint, 
-		shared_ptr<Material> material, 
-		shared_ptr<Ray> refractRay
+		shared_ptr<Material> material
 	);
 
 };

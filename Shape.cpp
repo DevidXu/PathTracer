@@ -317,3 +317,13 @@ void Sphere::tessellate(float iteration, Object* obj) {
 
 	return;
 }
+
+
+Model::Model(Vector3 center, string filename) {
+
+}
+
+
+bool Model::readFile(string filename) {
+	return true;
+}

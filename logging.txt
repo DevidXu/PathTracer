@@ -1,0 +1,23 @@
+A ray tracer completed by Dewei Xu:
+Mesh of all objects loaded here:
+    Cornell Box is loaded successfully;
+    Left Wall is loaded successfully;
+    Right Wall is loaded successfully;
+    Glass Ball is loaded successfully;
+    Red Cube is loaded successfully;
+    Purple Cube is loaded successfully;
+    Light is loaded successfully;
+
+
+Triangle number:    84
+Bounding box depth: 5
+Resolution--Height: 256
+Resolution--Width:  256
+Num of Rays/Pixel:  40
+OpenMP is utilized for accelerating the parallel process.
+Total time consumed:275s
+
+Begin to write the image
+Finish rendering the image. Check the path for result.
+D:\Microsoft Visual Studio\Projects\PathTracer\PathTracer./image.bmp
+Path tracer is completed successfully!

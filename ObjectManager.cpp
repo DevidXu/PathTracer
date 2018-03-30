@@ -5,7 +5,7 @@
 #include "Material.h"
 
 void ObjectManager::initialize() {
-	shared_ptr<Object> box, left_wall, right_wall, glass_ball, red_cube, purple_cube, light;
+	shared_ptr<Object> box, left_wall, right_wall, glass_ball, red_cube, purple_cube, light, bunny;
 
 	// generate all the objects needed to add into cornell box
 	// this part mainly defines the shape, size, material, color, emissive and name attributes of every objects
@@ -52,7 +52,7 @@ void ObjectManager::initialize() {
 		// the sphere of transparent material
 		glass_ball = make_shared<Object>(
 			make_shared<Sphere>(
-				Vector3(2.0f, 1.2f, 2.5f),
+				Vector3(2.0f, 1.2f, 2.8f),
 				0.7f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY,
@@ -78,15 +78,15 @@ void ObjectManager::initialize() {
 		red_cube = make_shared<Object>(
 			make_shared<Rectangle>(
 				Vector3(1.0f, 2.3f, 0.0f),
-				Vector3(2.3f, 3.3f, 1.6f)
+				Vector3(2.4f, 3.3f, 1.3f)
 				),
 			make_shared<Diff>(
-				Vector3(0.0f, 0.781f, 0.547f),
+				Vector3(0.8f, 0.15f, 0.15f),
 				Vector3(0.0f, 0.0f, 0.0f)
 				),
 			"Red Cube"
 			);
-
+		//red_cube->getShape()->rotate(Vector3(0.0f, 0.0f, 30.0f));
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
 				Vector3(1.0f, 1.25f, 3.99f),
@@ -94,10 +94,25 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(
 				Vector3(0.0f, 0.0f, 0.0f),
-				Vector3(16.0f, 16.0f, 16.0f)
+				Vector3(13.0f, 13.0f, 13.0f)
 				),
 			"Light"
 			);
+		/*
+		bunny = make_shared<Object>(
+			make_shared<Model>(
+				Vector3(1.7f, 2.7f, 1.3f),
+				0.14f,
+				"./bunny.obj"
+				),
+			make_shared<Diff>(
+				Vector3(0.5f, 0.54f, 0.527f),
+				Vector3(0.0f, 0.0f, 0.0f)
+				),
+			"Bunny"
+			);
+		bunny->getShape()->rotate(Vector3(-90.0f, 0.0f, 90.0f));
+		*/
 	}
 	catch (exception e) {
 		LOGPRINT("Meet error when creating the shapes");
@@ -108,7 +123,8 @@ void ObjectManager::initialize() {
 	objList.push_back(right_wall);
 	objList.push_back(glass_ball);
 	objList.push_back(red_cube);
-	objList.push_back(purple_cube);
+	//objList.push_back(purple_cube);
+	//objList.push_back(bunny);
 	objList.push_back(light);
 
 }

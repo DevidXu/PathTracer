@@ -13,6 +13,12 @@ Shape::Shape() {
 
 
 Shape::~Shape() {
+	for (auto& ele : vertexs)
+		delete ele;
+	for (auto& ele : normals)
+		delete ele;
+	for (auto& ele : meshes)
+		delete ele;
 
 	vertexs.clear();
 	normals.clear();
@@ -26,6 +32,7 @@ void Shape::setOwner(Object* m) {
 }
 
 
+// don't use it, the later fix is ignored in this function
 void Shape::translate(Vector3 movement) {
 	try {
 		if (vertexs.size() == 0) throw("No vertex information!");
@@ -35,6 +42,9 @@ void Shape::translate(Vector3 movement) {
 			else throw ("Invalid vertex information");
 
 		center = center + movement;
+
+		for (auto& ele : meshes)
+			ele->calculateCentroid();
 	}
 	catch (exception e) {
 		LOGPRINT(e.what());
@@ -106,6 +116,7 @@ void Shape::rotate(Vector4 quaternion) {
 
 		normalVector = normalVector + uv + uuv;
 		ptr->setNormalVector(normalVector);
+		ptr->calculateCentroid();
 	}
 	return;
 }
@@ -319,11 +330,48 @@ void Sphere::tessellate(float iteration, Object* obj) {
 }
 
 
-Model::Model(Vector3 center, string filename) {
+Model::Model(Vector3 move, float scale, string filename) {
+	ifstream inf;
+	string s, s1, s2, s3, s4;
+	try {
+		inf.open(filename);
+		_ASSERT(inf.is_open());
+	}
+	catch (exception e) {
+		cout << "The file " << filename << " doesn't exist in current path" << endl;
+		return;
+	}
 
-}
+	while (getline(inf, s))
+	{
+		istringstream in(s);
+		in >> s1 >> s2 >> s3 >> s4;
 
+		if (s[0] == 'v') {
+			Vector3 *v = new Vector3(float(atof(s2.c_str())),float(atof(s3.c_str())),float(atof(s4.c_str())));
+			*v = *v * scale;
+			//*v = *v + move;
+			vertexs.push_back(v);
 
-bool Model::readFile(string filename) {
-	return true;
+			Vector3 *n = new Vector3(float(atof(s2.c_str())), float(atof(s3.c_str())), float(atof(s4.c_str())));
+			n->normalize();
+			normals.push_back(n);
+		};
+
+		if (s[0] == 'f')
+		{
+			int a = atoi(s2.c_str()), b = atoi(s3.c_str()), c = atoi(s4.c_str());
+
+			Triangle* triangle = new Triangle(
+				vertexs[a-1], vertexs[b-1], vertexs[c-1],
+				normals[a-1], normals[b-1], normals[c-1]
+			);
+
+			meshes.push_back(triangle);
+		}
+	}
+
+	//setCenter(move);
+	translate(move);
+	inf.close();
 }

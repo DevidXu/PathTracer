@@ -93,9 +93,7 @@ public:
 		setCenter(Vector3(0.0f, 0.0f, 0.0f));
 	}
 
-	Model(Vector3 center, string filename);
-
-	bool readFile(string filename);
+	Model(Vector3 center, float scale, string filename);
 
 	virtual float getRadius() { return 0.0f; }
 

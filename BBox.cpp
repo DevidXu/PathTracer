@@ -56,9 +56,11 @@ void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
 	}
 
 	// calculate the mean value of each axis
-	for (auto& triangle : triangleList)
+	for (auto& triangle : triangleList){
+		Vector3 centroid = triangle->getCentroid();
 		for (int i = 0; i < 3; i++)
-			mean[i] += triangle->getCentroid().value[i];
+			mean[i] += centroid.value[i];
+	}
 
 	for (int i = 0; i < 3; i++)
 		mean[i] /= triangleList.size();

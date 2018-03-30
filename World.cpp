@@ -17,7 +17,7 @@ World::World() {
 
 	objects.clear();
 
-	LOGPRINT("A ray tracer completed by Dewei Xu:");
+	LOGPRINT("A ray tracer completed by Dewei Xu");
 }
 
 World::~World() {
@@ -125,8 +125,8 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
     ray->transmit(normal, &hitPoint, obj->getMaterial());
 
 	// put there to record the hit position
-	//if (obj->getColor().magnitude() == 0.0f) 
-	//	return obj->getEmissive();		// if meet the light source
+	if (obj->getColor().magnitude() == 0.0f) 
+		return obj->getEmissive();		// if meet the light source
 
 	Vector3 rayColor = pathTracing(ray);
 	
@@ -155,7 +155,9 @@ RENDERSTATE World::renderScene() {
 	LOGPRINT("OpenMP is not supported on your computer");
 #else
 	LOGPRINT("OpenMP is utilized for accelerating the parallel process.");
+#ifndef DEBUG
 #pragma omp parallel for  schedule(dynamic, 1) private(color)
+#endif
 #endif
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {

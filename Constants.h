@@ -5,16 +5,12 @@
 These variables cannot be changed
 */
 
-//#define DEBUG		1
-
 #define SAMPLE_RATE 0.0001
 
 #define HEIGHT		256
 #define WIDTH		256
 
 #define SAMPLE_NUM	40  // must be times of 4
-
-//#define TESSELLATE		1
 
 #define ENVIRONMENT_COLOR	Vector3(0.05f, 0.05f, 0.05f)
 
@@ -24,7 +20,7 @@ These variables cannot be changed
 
 #define CAMERA_POSITION Vector3(BOX_LENGTH - 0.1f, 2.0f, 2.2f)
 #define CAMERA_FORWARD	Vector3(-1.0f, 0.0f, 0.0f)
-#define HAMMERSLEY		true // Hammersley sample for rays in each pixel
+#define HAMMERSLEY		false // Hammersley sample for rays in each pixel
 
 #define ANGLEVIEWWIDTH	53
 #define ANGLEVIEWHEIGHT 53

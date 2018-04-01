@@ -2,7 +2,7 @@
 #include "World.h"
 #include <omp.h>
 
-#define SAMPLE_NUM	60  // must be times of 4
+#define SAMPLE_NUM	20  // must be times of 4
 
 World::World() {
 	// initialize the bounding box (Cornell box)
@@ -234,9 +234,7 @@ bool World::renderScene() {
 	rd_exit = true;
 	camera->drawScene();
 	winFace->finishRender();
-
-	Debug->timeCountEnd();
-	Debug->showTiming();
+	Debug->finishRender();
 
 	return true;
 }

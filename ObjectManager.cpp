@@ -98,7 +98,7 @@ void ObjectManager::initialize() {
 				),
 			"Light"
 			);
-		/*
+		
 		bunny = make_shared<Object>(
 			make_shared<Model>(
 				Vector3(1.7f, 2.7f, 1.3f),
@@ -112,7 +112,7 @@ void ObjectManager::initialize() {
 			"Bunny"
 			);
 		bunny->getShape()->rotate(Vector3(-90.0f, 0.0f, 90.0f));
-		*/
+		
 	}
 	catch (exception e) {
 		LOGPRINT("Meet error when creating the shapes");
@@ -124,7 +124,7 @@ void ObjectManager::initialize() {
 	objList.push_back(glass_ball);
 	objList.push_back(red_cube);
 	//objList.push_back(purple_cube);
-	//objList.push_back(bunny);
+	objList.push_back(bunny);
 	objList.push_back(light);
 
 }

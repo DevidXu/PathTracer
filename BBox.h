@@ -68,9 +68,10 @@ public:
 
 	// These functions are used to call recursively to find the triangle which intersect
 	// with the ray in the bounding box
-	Triangle* hitCloestTriangle(const shared_ptr<Ray> ray, float& distance);
+	Triangle* hitCloestTriangle(const shared_ptr<Ray> ray, float& distance, Vector3 inPoint, Vector3 outPoint);
 	Triangle* intersect(shared_ptr<Ray> ray, float* distance);
 	bool hitRay(const shared_ptr<Ray> ray, float& distance);
+	bool hitRay(const shared_ptr<Ray> ray, Vector3& inPoint, Vector3& outPoint);
 
 	// helper functions 
 	int maxDepth();

@@ -13,7 +13,6 @@ Debugging::Debugging() {
 
 
 Debugging::~Debugging() {
-	storage.close();
 }
 
 
@@ -68,6 +67,13 @@ void Debugging::timeCountStart() {
 void Debugging::timeCountEnd(){
 	end = time(NULL);
 	LOGPRINT("Total time consumed:" + to_string(int((float(end - start))*1.0f)) + "s\n");
+}
+
+
+void Debugging::finishRender() {
+	timeCountEnd();
+	showTiming();
+	storage.close();
 }
 
 

@@ -48,6 +48,7 @@ public:
 	void timeCountEnd();
 	void setProgress(float progress);
 	void showProgress();
+	void finishRender();
 
 	// render the image at certain interval
 	bool renderInterval(time_t current_time);

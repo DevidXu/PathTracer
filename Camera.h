@@ -1,7 +1,8 @@
 #pragma once
 
 // This file defines one camera in the scene. It will generate rays by working 
-// together with the raster class.
+// together with the raster class. It contains functions like rotation and generate
+// bitmaps. It serves as a private variable of World
 
 #include "Constants.h"
 #include "Vector.h"

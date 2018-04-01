@@ -3,7 +3,7 @@
 // This stores each point on the screen and their RGB value
 // It will be used for generating a RGB file and calculate the value for each raster.
 // It can also be used to draw grayscale image for debugging usage. In such case, pixel[0-2] is the same value.
-// Some post effects can be added here for more effects.
+// Some post effects can be added here for more effects. It serves as a variable of Camera.
 
 #include "Debugging.h"
 #include "Vector.h"

@@ -1,5 +1,7 @@
 #pragma once
 
+// This file manage all the objects in the scene.
+
 #include "Singleton.h"
 #include "Object.h"
 

@@ -1,5 +1,10 @@
 #pragma once
 
+// This file defines the calculation formulas of BRD, including calculate micro face,
+// reflection rate, etc.. It contains Hammersley sample and importance sample.
+// Meanwhile, many important material data is stored in this function. BRDF serves as
+// a private variable of Material class
+
 #include "Singleton.h"
 #include "Constants.h"
 #include "Vector.h"

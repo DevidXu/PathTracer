@@ -1,5 +1,9 @@
 #pragma once
 
+// This file defines some common used shape and simplify the process of creating
+// a geometry shape. It contains rectangle and sphere. For sphere it has some 
+// special process to ensure the ray intersection happens correctly.
+
 #include "Vector.h"
 #include "BBox.h"
 #include "Triangle.h"

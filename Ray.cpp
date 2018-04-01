@@ -9,6 +9,7 @@ Ray::Ray(const Ray& ray) {
 	intensity = ray.intensity;
 	positions = ray.positions;
 	directions = ray.directions;
+	normals = ray.normals;
 }
 
 
@@ -19,6 +20,7 @@ void Ray::operator=(const Ray& ray) {
 	intensity = ray.intensity;
 	positions = ray.positions;
 	directions = ray.directions;
+	normals = ray.normals;
 }
 
 
@@ -39,9 +41,33 @@ void Ray::setDirection(Vector3 d, bool push) {
 	}
 }
 
+
+void Ray::showPath() {
+	cout << "Positions: ";
+	for (auto& pos : positions) {
+		cout << pos << " ";
+	}
+	cout << endl << "Direction: ";
+	for (auto& dir : directions) {
+		cout << dir << " ";
+	}
+	cout << endl;
+	return;
+}
+
+
+void Ray::setNormal(Vector3 n, bool push) {
+	if (push) normals.push_back(n);
+	else {
+		normals[normals.size() - 1] = n;
+	}
+}
+
+
 void Ray::initialize(Vector3 o, Vector3 d) {
 	setOrigin(o);
 	setDirection(d);
+	setNormal(CAMERA_FORWARD);
 	depth = 0;
 	intensity = 1.0f;
 	return;

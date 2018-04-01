@@ -1,8 +1,12 @@
 #pragma once
 
-// This file defines all the necessary Vector operations
+// This file defines all the necessary Vector operations. It overrides some operator
+// and defines the way to print the Vectors.
+// It defines Vector[2,3,4]. THe mostly used vector is Vector3.
 #include <assert.h>
 #include "iostream"
+#include <iomanip>
+
 using namespace std;
 
 float MAX(float a, float b);
@@ -12,7 +16,7 @@ template <int n>
 class Vector {
 public:
 	float value[n];
-public:
+
 	Vector(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) {
 		float arr[] = { x, y, z, w };
 		for (int i = 0; i < n; i++)
@@ -32,6 +36,8 @@ public:
 	float operator[](const int k) {
 		return value[k];
 	}
+
+	friend ostream& operator<<(ostream& out, const Vector2 v);
 
 	bool operator==(const Vector2 &v) {
 		for (int i = 0; i < 2; i++)
@@ -125,7 +131,7 @@ public:
 
 };
 
-ostream &operator<<(ostream& out, const Vector2 &v);
+ostream &operator<<(ostream& out, const Vector2 v);
 
 class Vector3 : public Vector<3> {
 public:
@@ -139,11 +145,7 @@ public:
 		return value[k];
 	}
 
-	ostream &operator<<(ostream& out) {
-		for (int i = 0; i < 3; i++)
-			cout << (*this)[i] << " ";
-		return out;
-	}
+	friend ostream &operator<<(ostream& out, const Vector3 v);
 
 	bool operator==(const Vector3 &v) {
 		for (int i = 0; i < 3; i++)
@@ -231,7 +233,7 @@ public:
 	}
 };
 
-ostream &operator<<(ostream& out, const Vector3 &v);
+ostream &operator<<(ostream& out, const Vector3 v);
 
 class Vector4 : public Vector<4> {
 public:
@@ -246,11 +248,7 @@ public:
 		return value[k];
 	}
 
-	ostream &operator<<(ostream& out) {
-		for (int i = 0; i < 4; i++)
-			cout << (*this)[i] << " ";
-		return out;
-	}
+	friend ostream &operator<<(ostream& out, const Vector4 v);
 
 	bool operator==(const Vector4 &v) {
 		for (int i = 0; i < 4; i++)
@@ -335,4 +333,4 @@ public:
 	}
 };
 
-ostream &operator<<(ostream& out, const Vector4 &v);
+ostream &operator<<(ostream& out, const Vector4 v);

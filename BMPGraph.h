@@ -3,8 +3,10 @@
 // This file is used to generate the BMP map. It can be adjusted to generate
 // graphes of different postfix like JPG, ttp as you like.
 
-#include "Debugging.h"
 #include "Constants.h"
+#include <fstream>
+#include <sstream>
+#include <iomanip>
 
 enum RasterType { RGB, GRAY };
 

@@ -10,6 +10,12 @@
 class Triangle;
 class Material;
 
+struct PixelInfo {
+	Vector3 normal;
+	Vector3 Zpos;
+
+	PixelInfo(Vector3 n, Vector3 z) :normal(n), Zpos(z) {};
+};
 
 class LightRate {
 public:
@@ -37,7 +43,7 @@ private:
 	
 	float intensity;	// the intensity of ray (1.0 initial value)
 	int depth;			// the number of iterations experience by a ray
-	vector<Vector3> positions, directions;	// used to monitor the direction of the ray
+	vector<Vector3> positions, directions, normals;	// used to monitor the direction of the ray
 
 public:
 	Ray() {
@@ -61,6 +67,8 @@ public:
 
 	void setDirection(Vector3 d, bool push = true);
 
+	void setNormal(Vector3 n, bool push = true);
+
 	void setIntensity(float i) {
 		_ASSERT(i <= 1.0f);
 		intensity = i;
@@ -75,6 +83,12 @@ public:
 
 	float	getIntensity()	{ return intensity; }
 
+	void showPath();
+
+	PixelInfo getHitInfo() { 
+		_ASSERT(positions.size() > 1);
+		return PixelInfo(normals[1], positions[1]);
+	}
 
 	void initialize(Vector3 o, Vector3 d);
 

@@ -1,7 +1,11 @@
 #pragma pack(2)// a must; or else the answer of sizeof is incorrect  
 
 #include "BMPGraph.h"
+#include <exception>
 #include <stdlib.h>
+#include <iostream>
+
+using namespace std;
 
 typedef unsigned char  BYTE;
 typedef unsigned short WORD;
@@ -95,7 +99,6 @@ void saveBitmap(const char* name, RasterType mark, int w, int h, int* begin)
 
 
 void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
-	LOGPRINT("Begin to write the image");
 	_ASSERT(height != 0);
 	_ASSERT(width != 0);
 
@@ -105,7 +108,8 @@ void BMPGraph::generate(int* begin, RasterType mark, const char* name) {
 		saveBitmap(name, mark, width, height, begin);
 	}
 	catch (exception e) {
-		LOGPRINT(e.what());
+		cout << "Error happened when generating bitmap.\n";
+		return;
 	}
 
 	return;
@@ -119,7 +123,7 @@ void BMPGraph::postProcess(int* begin, POSTPROCESS pProcess) {
 	case HDR:
 		HDRProcess(begin); break;
 	default:
-		LOGPRINT("No such post process defined!");
+		return;
 		break;
 	}
 }
@@ -167,5 +171,5 @@ void denoiseProcess(int* begin) {
 
 
 void HDRProcess(int* begin) {
-	LOGPRINT("HDR is not supported for single image process");
+	cout << "HDR is not supported for single image process" << endl;
 }

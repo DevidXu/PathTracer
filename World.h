@@ -10,16 +10,20 @@ This class is the main class after we start the program. It will construct the w
 #include "Camera.h"
 #include "Ray.h"
 #include "Constants.h"
+#include "Interface.h"
 #include <memory>
 #include <sstream>
-#define RENDERSTATE bool
 
 class World :public Singleton<World> {
 private:
-	// variables
+	// important variables
 	shared_ptr<BBox> bbox;
 	shared_ptr<Camera> camera;
+	shared_ptr<Interface> winFace; // windows Interface
 	vector<shared_ptr<Object>> objects;
+
+	// auxiliary variables
+	bool rd_exit = false, rd_pause = false;
 
 	// functions
 	World();
@@ -27,10 +31,12 @@ private:
 
 public:
 	friend Singleton <World>;
+	friend class Interface;
 
 	void initialize();
 
-	RENDERSTATE renderScene();
+	bool renderScene();
+	void renderPixel(int i, int j, int num, bool showPath);
 
 	void drawScene();
 
@@ -40,4 +46,6 @@ public:
 	Vector3 intersectTest(shared_ptr<Ray> ray, Triangle* &patch, float &distance);
 
 	Vector3 pathTracing(shared_ptr<Ray> ray);
+
+	shared_ptr<Interface> getInterface() { return winFace; }
 };

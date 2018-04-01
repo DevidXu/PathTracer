@@ -7,8 +7,6 @@ using namespace std;
 
 #define MAX_MODULENAME 15
 
-#define RENDER_INTERVAL 600
-
 Debugging::Debugging() {
 	storage.open(LOGFILE);
 }
@@ -64,43 +62,41 @@ bool Debugging::moduleTest() {
 void Debugging::timeCountStart() {
 	// calculate the time needed
 	start = time(NULL);
-
-	system("cls");
-	cout << "Rendering Progress: 0%" << endl;
-	cout << "Estimated Left Time: 10h" << endl;
 }
 
 
-void Debugging::timeCountEnd(){	
-	system("cls");
+void Debugging::timeCountEnd(){
 	end = time(NULL);
 	LOGPRINT("Total time consumed:" + to_string(int((float(end - start))*1.0f)) + "s\n");
-
-	cout << "Rendering Progress: 100%" << endl;
-	cout << "Image has been rendered! Check the local image." << endl;
 }
 
 
-void Debugging::showProgress(float progress) {
-	static float last_progress = 0.0f;
-
-	if (progress - last_progress > 1) {
-		last_progress = progress;
-		system("cls");
-		
-		cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
-		current = time(NULL);
-		int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
-		
-		// standardlize the output
-		cout << "Estimated Left Time: ";
-		if (esti_time >= 3600) cout << esti_time / 3600 << "h";
-		esti_time %= 3600;
-		if (esti_time >= 60) cout << esti_time / 60 << "m";
-		esti_time %= 60;
-		if (esti_time > 0) cout << esti_time << "s";
-		cout << endl;
+void Debugging::setProgress(float current_progress) {
+	if (current_progress - progress > 1) {
+		progress = current_progress;
 	}
+}
+
+
+void Debugging::showProgress() {
+	if (progress == 0.0f) {
+		cout << "Rendering Progress: 0%" << endl;
+		cout << "Estimated Left Time: Unknown." << endl;
+		return;
+	}
+
+	cout << "Rendering Progress: " << setiosflags(ios::fixed) << setprecision(0) << progress << "%" << endl;
+	current = time(NULL);
+	int esti_time = int((float(current - start))*1.0f / progress * (100 - progress));
+
+	// standardlize the output
+	cout << "Estimated Left Time: ";
+	if (esti_time >= 3600) cout << esti_time / 3600 << "h";
+	esti_time %= 3600;
+	if (esti_time >= 60) cout << esti_time / 60 << "m";
+	esti_time %= 60;
+	if (esti_time > 0) cout << esti_time << "s";
+	cout << endl;
 
 	return;
 }
@@ -173,6 +169,9 @@ void Debugging::timing(string moduleName, bool start) {
 
 
 void Debugging::showTiming() {
+#ifndef DEBUG
+	return;
+#endif
 	cout << "Timing for each module: " << endl;
 
 	for (map<string, float>::iterator iter = time_map.begin(); iter != time_map.end();iter++) {

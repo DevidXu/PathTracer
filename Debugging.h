@@ -24,6 +24,7 @@ private:
 
 	// used to calculate progress
 	time_t start, current, end;
+	float progress;
 
 	// calculate time consumed for each module
 	map<string, clock_t> timing_map;
@@ -45,7 +46,8 @@ public:
 	// used to calculate the time needed
 	void timeCountStart();
 	void timeCountEnd();
-	void showProgress(float progress);
+	void setProgress(float progress);
+	void showProgress();
 
 	// render the image at certain interval
 	bool renderInterval(time_t current_time);

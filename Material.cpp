@@ -25,6 +25,7 @@ void Diff::transmit(
 
 	ray->setDirection(direction);
 	ray->setOrigin(*hitPoint);
+	ray->setNormal(normal);
 
 	return;
 }
@@ -41,7 +42,7 @@ void Spec::transmit(
 
 	ray->setOrigin(*hitPoint, false);
 	ray->setDirection(direction, false);
-
+	ray->setNormal(normal, false);
 	return;
 }
 
@@ -56,6 +57,7 @@ void Refl::transmit(
 	_ASSERT(refractivity != 0.0f);
 
 	ray->setOrigin(*hitPoint);
+	ray->setNormal(normal);
 
 	float dot = ray->getDirection().dot(normal);
 

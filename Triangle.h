@@ -1,6 +1,11 @@
 #pragma once
 
 // This defines the class of a triangle. It contains the normal and vertex information
+// Meanwhile, triangle is called frequently by other classes. Therefore, some auxiliary
+// functions are added to calculate the updated normal, centroid, etc..
+// Remember, if you change some functions inside, you might need to update many related
+// values like normals, vertex..
+
 #include "Vector.h"
 #include "Ray.h"
 #include "Constants.h"

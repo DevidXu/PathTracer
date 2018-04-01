@@ -76,12 +76,8 @@ Vector3 rotate(Vector3 dir, Vector3 eulerAngle) {
 
 
 Vector3 BRDF::diffReflectDir(Vector3 v, Vector3 n) {
-	static int sample_num = 0;
-	if (sample_num >= SAMPLE_NUM) sample_num -= SAMPLE_NUM;
-	
 	//Vector2 point = hammersleyPoints(sample_num, SAMPLE_NUM);
 	Vector2 point = Vector2(rand() / (RAND_MAX + 1.0f), rand() / (RAND_MAX + 1.0f));
-	sample_num += 1;
 
 	point = importanceSampling(point);
 

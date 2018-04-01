@@ -129,6 +129,7 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 					Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
 					ray_ptr->setOrigin(position);
 					ray_ptr->setDirection(direction);
+					ray_ptr->setNormal(CAMERA_FORWARD);
 					ray_ptr->setIntensity(1.0f);
 				}
 				catch (exception e) {

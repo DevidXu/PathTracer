@@ -2,6 +2,7 @@
 #include "World.h"
 #include <omp.h>
 
+#define SAMPLE_NUM	60  // must be times of 4
 
 World::World() {
 
@@ -14,6 +15,8 @@ World::World() {
 		CAMERA_POSITION,	// position
 		CAMERA_FORWARD	// forward
 		);
+
+	winFace = make_shared<Interface>();
 
 	objects.clear();
 
@@ -28,8 +31,11 @@ World::~World() {
 // add all objects into the scene and construct the bounding box with small depth
 void World::initialize() {
 
+	winFace->initialize();
+	
 	ObjectManager::getInstance()->initialize();
 	ObjList* objList = ObjectManager::getInstance()->getObjectList();
+
 
 	// if all generated successfully, this part will add objects by adding triangles into the bounding box 
 	// (triangle contains pointers to vertexs)
@@ -103,9 +109,6 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	Vector3 hitPoint = ray->getOrigin() + ray->getDirection()*distance;
 
 	Debug->recordPath(obj->getName(), &hitPoint);
-	if (obj->getName() == "Red Cube") {
-		int k = 1;
-	}
 
 	Vector3 color = obj->getColor();
 	if (ray->getDepth() > MAX_DEPTH) {
@@ -138,29 +141,35 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 
 // This function begins path tracing
-RENDERSTATE World::renderScene() {
+bool World::renderScene() {
 
 	int height = camera->getHeight(), width = camera->getWidth();
 	int sum_pixels = height * width;
 
 	Debug->timeCountStart();
 
-	Vector3 color;
-
 	LOGPRINT("Resolution--Height: " + to_string(height));
 	LOGPRINT("Resolution--Width:  " + to_string(width));
 	LOGPRINT("Num of Rays/Pixel:  " + to_string(SAMPLE_NUM));
+	LOGPRINT("Max Depth for ray:  " + to_string(MAX_DEPTH));
+
+	// shared variables and needed to be set private
+	Vector3 color, normal;
+	float depth;
 
 #ifndef _OPENMP
 	LOGPRINT("OpenMP is not supported on your computer");
 #else
 	LOGPRINT("OpenMP is utilized for accelerating the parallel process.");
-#ifndef DEBUG
-#pragma omp parallel for  schedule(dynamic, 1) private(color)
-#endif
+#pragma omp parallel for schedule(dynamic, 1) private(color, normal, depth)
 #endif
 	for (int i = 0; i < height; i++) {
+		if (rd_exit) break;
 		for (int j = 0; j < width; j++) {
+			if (rd_exit) break;
+			color = Vector3(); normal = Vector3();
+			depth = 0.0f;
+
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
 			for (int k = 0; k < SAMPLE_NUM; k++) rays->push_back(make_shared<Ray>());
 
@@ -168,8 +177,10 @@ RENDERSTATE World::renderScene() {
 			camera->generateRay(rays, i, j);
 			Debug->timing("Generate Ray", false);
 
-			color = Vector3(0.0f, 0.0f, 0.0f);
-			for (auto &ray : *rays) {
+			for (auto& ray : *rays) {
+				if (rd_exit) break;
+				while (rd_pause) cvWaitKey(1000);
+
 				Debug->setSample(i, j, (rand() / (RAND_MAX + 1.0f)) < SAMPLE_RATE ? true : false);
 
 				Debug->timing("Path Tracing", true);
@@ -180,29 +191,62 @@ RENDERSTATE World::renderScene() {
 
 				// pixel color might be larger than 1 for strong light
 				color = color + pixel_color;
+				normal = normal + ray->getHitInfo().normal;
+				depth = depth + (ray->getHitInfo().Zpos - CAMERA_POSITION).dot(CAMERA_FORWARD);
+				if ((ray->getHitInfo().Zpos - CAMERA_POSITION).dot(CAMERA_FORWARD) > 7.0f)
+					continue;
 			}
 
 			// get the average and set 1.0f as maximum
 			color = color / (float)rays->size();
 			for (int k = 0; k < 3; k++)
 				color.value[k] = color.value[k] > 1.0f ? 1.0f : color.value[k];
+			normal = normal / (float)rays->size();
+			depth = depth / float(rays->size());
 
+			// update the pixel data in camera and interface
 			camera->Render(color, i, j);
+			winFace->updateData(color, normal, depth, i, j);
 
 			// print the progress
-			Debug->showProgress((i*width + j)*100.0f / sum_pixels);
+			Debug->setProgress((i*width + j)*100.0f / sum_pixels);
 		}
-
-		// after certain time, render the image temporarily
-		if (Debug->renderInterval(time(NULL))) camera->drawScene();
-
 	}
+
+	rd_exit = true;
+	camera->drawScene();
+	winFace->finishRender();
 
 	Debug->timeCountEnd();
 	Debug->showTiming();
 
 	return true;
 }
+
+
+// this function servers as auxiliary function to debug one pixel
+void World::renderPixel(int i, int j, int num, bool showPath = false) {
+	shared_ptr<PixelRays> rays = make_shared<PixelRays>();
+	for (int k = 0; k < num; k++) rays->push_back(make_shared<Ray>());
+	camera->generateRay(rays, i, j);
+	int k = 0;
+	for (auto& ray : *rays) {
+		k += 1;
+		Vector3 pixel_color = pathTracing(ray);
+		Vector3 normal = ray->getHitInfo().normal;
+		Vector3 depth = (ray->getHitInfo().Zpos - CAMERA_POSITION).dot(CAMERA_FORWARD);
+		cout << "\n" << left << setw(7) << "Ray " + to_string(k) << "Tracing Data:" << endl;
+		cout << "Color:  " << pixel_color << endl;
+		cout << "Normal: " << normal << endl;
+		cout << "Depth:  " << depth << endl;
+
+		if (showPath) ray->showPath();
+
+	}
+
+	return;
+}
+
 
 // This function saves RGB data and store it as a graph.
 void World::drawScene() {

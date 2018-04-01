@@ -19,7 +19,7 @@ using namespace cv;
 enum ImageType { ORIGIN, NORMAL, DEPTH, DEBUG };
 
 
-class Interface :public Singleton<Interface> {
+class Interface {
 public:
 	// update the color and depth and normal information of the mat class
 	void updateData(Vector3 color, Vector3 normal, float depth, int i, int j);

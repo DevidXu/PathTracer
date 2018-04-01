@@ -10,6 +10,7 @@ Interface::Interface() {
 	cvNamedWindow(WINDOW_NAME, WINDOW_NORMAL);
 	cvResizeWindow(WINDOW_NAME, WIDTH * 2, HEIGHT * 2);
 
+	// create CV Mat for rendering and adjust each pixel easily
 	image = new Mat(WIDTH, HEIGHT, CV_8UC3, Scalar(0, 0, 0));
 	normalMap = new Mat(WIDTH, HEIGHT, CV_8UC3, Scalar(0, 0, 0));
 	depthMap = new Mat(WIDTH, HEIGHT, CV_8UC3, Scalar(0, 0, 0)); // grey map
@@ -33,6 +34,7 @@ Interface::~Interface() {
 }
 
 
+// Update the value of single pixel of those mats
 void Interface::updateData(Vector3 color, Vector3 normal, float depth, int i, int j) {
 	color = Vector3(color.value[2], color.value[1], color.value[0]);
 	normal = Vector3(normal.value[2], normal.value[1], normal.value[0]);
@@ -44,6 +46,7 @@ void Interface::updateData(Vector3 color, Vector3 normal, float depth, int i, in
 }
 
 
+// called when the rendering is finished to ensure image are shown correctly
 void Interface::finishRender() {
 	normalize(*depthMap, *depthMap, 255.0, 1.0, NORM_MINMAX);
 	showImages();
@@ -78,8 +81,6 @@ void Interface::updateDebugImage() {
 
 // don't call it frequently; it will consume some resource
 void Interface::showImages() {
-	//normalize(*depthMap, *depthMap, 255.0, 1.0, NORM_MINMAX);
-
 	Mat mergedImage, upline, downline;
 	hconcat(*image, *depthMap, upline);
 	hconcat(*normalMap, *debugMap, downline);
@@ -93,10 +94,10 @@ void Interface::showImages() {
 			);
 		}
 	imshow(WINDOW_NAME, mergedImage);
-	cvWaitKey(50);
+	cvWaitKey(50);	// a must for imshow to function properly
 }
 
-// rt means ray tracer
+// rt means ray tracer; this defines the supported orders enum value
 enum ORDERS {
 	rt_start,
 	rt_pause,
@@ -107,6 +108,7 @@ enum ORDERS {
 	rt_progress
 };
 
+// this defines the supported command line orders
 static const char* ORDERS_STRING[] = {
 	"start",
 	"pause",
@@ -117,6 +119,7 @@ static const char* ORDERS_STRING[] = {
 	"progress"
 };
 
+// this complete intro order, it will give an introduction to each command line order
 static const char* ORDERS_INTRO[] = {
 	"Start the rendering and resume the paused process",
 	"Pause the rendering process (at ray level)",
@@ -127,6 +130,10 @@ static const char* ORDERS_INTRO[] = {
 	"Show the rendering progress of whole image"
 };
 
+
+// process incoming messages; when the process start, the rendering loop will be stopped to
+// ensure the efficiency of translating messages like render, draw.
+// After the message is process, the rendering process will return to the original state
 bool Interface::translateMessage(string s) {
 	string word;
 	stringstream ss(s);
@@ -222,6 +229,7 @@ bool Interface::translateMessage(string s) {
 }
 
 
+// serve as the main loop of the interactive window
 bool Interface::beginMessageLoop() {
 	cout << "This is ray tracer completed by Dewei Xu, @Shanghai Jiao Tong Univ. The file can only be used for educational purpose. All rights are reserved by Dewei." << endl;
 	bool loopBegin = false;
@@ -244,6 +252,7 @@ bool Interface::beginMessageLoop() {
 }
 
 
+// show text on specified position on the images
 void Interface::showText(Mat* image, CvPoint point, string s) {
 	putText(*image, s, point, CV_FONT_HERSHEY_COMPLEX, 0.5, cvScalar(0, 0, 255));
 }

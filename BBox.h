@@ -77,7 +77,7 @@ public:
 };
 
 
-class BBox :public Singleton<BBox> {
+class BBox {
 private:
 
 	Cube box;

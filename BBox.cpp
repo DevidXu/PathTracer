@@ -4,6 +4,8 @@ float MIN(float a, float b) {
 	return a < b ? a : b;
 }
 
+
+// set the small and large bounding vector of a cube
 void Cube::setCube(Vector3 s, Vector3 l) {
 	try {
 		_ASSERT(s < l);
@@ -19,6 +21,8 @@ void Cube::setCube(Vector3 s, Vector3 l) {
 }
 
 
+// before call this funciton, you should ensure the dimension and mid variable has been given 
+// value correctly. The KD tree will base on these two value to divide the cube
 void Cube::divideCube() {
 	if (left != nullptr) return;
 	
@@ -42,6 +46,9 @@ void Cube::divideCube() {
 
 // when insert triangle list, we need to determine the layermark(use x?y?z to divide) as
 // well as whether sub-cube is needed.
+// This function will be called recursively. It will divide the triangleList into three 
+// parts: triangles in itself/leftcube/rightcube. It decides the divide boundary based on
+// the variance of the centroid of all triangles.
 void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
 	if (triangleList.size() <= 1) {
 		for (auto ele : triangleList)
@@ -84,6 +91,8 @@ void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
 	leftSequence.clear();
 	rightSequence.clear();
 
+	// divide triangles into left/right cube by judging whether they are totally in the sub region
+	// the leaving triangles will be stored in the current cube
 	while (triangleList.empty() == false) {
 		Triangle* triangle = triangleList.at(triangleList.size() - 1);
 		triangleList.pop_back();
@@ -101,6 +110,7 @@ void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
 		triangle_ptr.push_back(triangle);
 	}
 
+	// if it is not the bottom-level, divide itself into smaller cubes.
 	if (leftSequence.size() > 0 || rightSequence.size() > 0) {
 		divideCube();
 		left->insertTriangleList(leftSequence);
@@ -111,6 +121,7 @@ void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
 }
 
 
+// aborted now; now we consider all triangles are added in a time into the scene
 void Cube::insertTriangle(Triangle* triangle) {
 	bool within = true;
 
@@ -129,6 +140,7 @@ void Cube::insertTriangle(Triangle* triangle) {
 }
 
 
+// called frequently when tracing ray; decide which triangle in current cube will intersect the ray
 Triangle* Cube::intersect(shared_ptr<Ray> ray, float* dis) {
 	float distance = MAX_DIS;
 	Triangle* hTriangle = nullptr;
@@ -292,6 +304,7 @@ BBox::~BBox() {
 }
 
 
+// add all triangles into triangleList and process them at one time
 void BBox::addTriangle(Triangle* triangle) {
 	// ensure triangle is smaller than the box
 	for (int i = 0; i < 3; i++) {
@@ -327,6 +340,7 @@ void BBox::addMesh(Mesh mesh) {
 
 
 Triangle* BBox::intersect(shared_ptr<Ray> ray, float &distance) {
+	// pre-process for unvalid rays
 	if (ray == nullptr || ray->getDirection().magnitude() < EPISILON) 
 		return nullptr;
 

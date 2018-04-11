@@ -81,8 +81,6 @@ Vector3 Camera::rotate(Vector3 eulerAngle) {
 
 void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 	int num = (int)rays->size();
-	
-	if (num % 4 != 0) throw("Sample num is not a multiple of 4.");
 
 	// calculate the size of the screen to sample evenly
 	float screen_width = tan(angleView.value[0] / 2) * 2;
@@ -112,30 +110,28 @@ void Camera::generateRay(shared_ptr<PixelRays> rays, int h, int w) {
 	}
 	
 #else
-	for (int i = 0; i < num / 4; i++)
-		for (int row = 0; row<2; row++)
-			for (int column = 0; column<2; column++) {
-				// sample methods
-				shared_ptr<Ray> ray_ptr = rays->at(i*4+row*2+column);
-				float pixel_width = float((rand() + 1) / (RAND_MAX + 2.0) + column * 0.5f);	// ~U(0,1)
-				float pixel_height = float((rand() + 1) / (RAND_MAX + 2.0) + row * 0.5f);		// ~U(0,1)
-				
-				float ray_width = screen_width * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
-				float ray_height = screen_height * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
-				float yaw = atan(ray_width);
-				float pitch = atan(ray_height/sqrt(1.0f+pow(ray_width,2)));
+	for (int i = 0; i < num; i++) {
+		// sample methods
+		shared_ptr<Ray> ray_ptr = rays->at(i);
+		float pixel_width = float((rand() + 1) / (RAND_MAX + 2.0));	// ~U(0,1)
+		float pixel_height = float((rand() + 1) / (RAND_MAX + 2.0));		// ~U(0,1)
 
-				try {
-					Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
-					ray_ptr->setOrigin(position);
-					ray_ptr->setDirection(direction);
-					ray_ptr->setNormal(CAMERA_FORWARD);
-					ray_ptr->setIntensity(1.0f);
-				}
-				catch (exception e) {
-					throw("Meet error when generating the direction of sample rays.");
-				}
-			}
+		float ray_width = screen_width * (0.5f - w * 1.0f / getWidth() + pixel_width / getWidth());
+		float ray_height = screen_height * (0.5f - h * 1.0f / getHeight() + pixel_height / getHeight());
+		float yaw = atan(ray_width);
+		float pitch = atan(ray_height / sqrt(1.0f + pow(ray_width, 2)));
+
+		try {
+			Vector3 direction = rotate(Vector3(0.0f, pitch, yaw)).normalize();
+			ray_ptr->setOrigin(position);
+			ray_ptr->setDirection(direction);
+			ray_ptr->setNormal(CAMERA_FORWARD);
+			ray_ptr->setIntensity(1.0f);
+		}
+		catch (exception e) {
+			throw("Meet error when generating the direction of sample rays.");
+		}
+	}
 #endif
 	return;
 }

@@ -23,7 +23,10 @@ private:
 	vector<shared_ptr<Object>> objects;
 
 	// auxiliary variables
-	bool rd_exit = false, rd_pause = false;
+	bool rd_exit = false, rd_pause = true;	// pause at the begining
+	bool rd_begin = false, rd_finish = false;
+
+	int height_begin = 0, height_end = HEIGHT, width_begin = 0, width_end = WIDTH;
 
 	// functions
 	World();

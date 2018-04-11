@@ -4,8 +4,13 @@
 #include "Vector.h"
 #include "Material.h"
 
+#define HI_BUNNY false	// whether render the bunny model (Note: it has over 60000 faces)
+#define HI_WOMAN true
+
 void ObjectManager::initialize() {
-	shared_ptr<Object> box, left_wall, right_wall, glass_ball, red_cube, purple_cube, light, bunny;
+	shared_ptr<Object> box, left_wall, right_wall;
+	shared_ptr<Object> glass_ball, red_cube, light;
+	shared_ptr<Object> bunny, woman;
 
 	// generate all the objects needed to add into cornell box
 	// this part mainly defines the shape, size, material, color, emissive and name attributes of every objects
@@ -52,7 +57,7 @@ void ObjectManager::initialize() {
 		// the sphere of transparent material
 		glass_ball = make_shared<Object>(
 			make_shared<Sphere>(
-				Vector3(2.0f, 1.2f, 2.8f),
+				Vector3(1.2f, 1.2f, 2.8f),
 				0.7f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY,
@@ -60,18 +65,6 @@ void ObjectManager::initialize() {
 				Vector3(0.0f, 0.0f, 0.0f)
 				),
 			"Glass Ball"
-			);
-
-		purple_cube = make_shared<Object>(
-			make_shared<Rectangle>(
-				Vector3(1.0f, 1.3f, 1.5f),
-				Vector3(1.2f, 2.0f, 2.5f)
-				),
-			make_shared<Diff>(
-				Vector3(0.54f, 0.17f, 0.88f),
-				Vector3(0.0f, 0.0f, 0.0f)
-				),
-			"Purple Cube"
 			);
 
 		// the rectangle of normal material
@@ -87,6 +80,7 @@ void ObjectManager::initialize() {
 			"Red Cube"
 			);
 		//red_cube->getShape()->rotate(Vector3(0.0f, 0.0f, 30.0f));
+
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
 				Vector3(1.0f, 1.25f, 3.99f),
@@ -94,11 +88,12 @@ void ObjectManager::initialize() {
 				),
 			make_shared<Diff>(
 				Vector3(0.0f, 0.0f, 0.0f),
-				Vector3(13.0f, 13.0f, 13.0f)
+				Vector3(10.0f, 10.0f, 10.0f)
 				),
 			"Light"
 			);
-		
+
+#if HI_BUNNY
 		bunny = make_shared<Object>(
 			make_shared<Model>(
 				Vector3(1.7f, 2.7f, 1.3f),
@@ -112,7 +107,24 @@ void ObjectManager::initialize() {
 			"Bunny"
 			);
 		bunny->getShape()->rotate(Vector3(-90.0f, 0.0f, 90.0f));
-		
+#endif
+
+#if HI_WOMAN
+		woman = make_shared<Object>(
+			make_shared<Model>(
+				Vector3(1.0f, 2.0f, 2.0f),
+				2.0f,
+				"./woman.obj",
+				"./woman.jpg"
+				),
+			make_shared<Diff>(
+				Vector3(1.0f, 1.0f, 1.0f),
+				Vector3(0.0f, 0.0f, 0.0f)
+				),
+			"Woman"
+			);
+		woman->getShape()->rotate(Vector3(-90.0f, 0.0f, 90.0f));
+#endif
 	}
 	catch (exception e) {
 		LOGPRINT("Meet error when creating the shapes");
@@ -123,8 +135,12 @@ void ObjectManager::initialize() {
 	objList.push_back(right_wall);
 	objList.push_back(glass_ball);
 	objList.push_back(red_cube);
-	//objList.push_back(purple_cube);
+#if HI_BUNNY
 	objList.push_back(bunny);
+#endif
+#if HI_WOMAN
+	objList.push_back(woman);
+#endif
 	objList.push_back(light);
 
 }

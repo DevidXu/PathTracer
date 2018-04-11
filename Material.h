@@ -11,7 +11,7 @@
 #include "Constants.h"
 #include "BRDF.h"
 
-class Material:public Singleton<Material> {
+class Material {
 private:
 	Vector3 color;		// this is the diffuse color for the material
 	Vector3 emissive;   // defines the self-shining color

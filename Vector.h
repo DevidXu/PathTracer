@@ -160,6 +160,12 @@ public:
 		return temp;
 	}
 
+	Vector3 operator+=(const Vector3 &v) {
+		for (int i = 0; i < 3; i++)
+			value[i] += v.value[i];
+		return *this;
+	}
+
 	Vector3 operator-(const Vector3 &v) {
 		Vector3 temp;
 		for (int i = 0; i < 3; i++)

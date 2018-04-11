@@ -72,8 +72,11 @@ void Debugging::timeCountEnd(){
 
 void Debugging::finishRender() {
 	timeCountEnd();
+	setProgress(100.0f);
 	showTiming();
 	storage.close();
+	cout << "Rendering process has been completed!" << endl;
+	cout << "Console: ";
 }
 
 

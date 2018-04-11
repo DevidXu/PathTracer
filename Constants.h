@@ -11,7 +11,7 @@
 #define WIDTH		256			// rendered image width
 
 
-#define ENVIRONMENT_COLOR	Vector3(0.05f, 0.05f, 0.05f)		// define ambiant color which will return when no intersect or excess maximum depth
+#define ENVIRONMENT_COLOR	Vector3(0.1f, 0.1f, 0.1f)		// define ambiant color which will return when no intersect or excess maximum depth
 
 #define BOX_LENGTH	7.0f		// x max of Cornell BOX
 #define BOX_WIDTH	4.0f		// y max of Cornell BOX

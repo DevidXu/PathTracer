@@ -8,7 +8,7 @@
 #include "BBox.h"
 #include "Triangle.h"
 #include "Material.h"
-
+#include <string>
 #include <vector>
 
 class Object;
@@ -19,7 +19,9 @@ class Shape {
 protected:
 	std::vector<Vector3*> vertexs;
 	std::vector<Vector3*> normals;
-	
+	std::vector<Vector2*> texcoords;
+	Mat texture;
+
 	Mesh meshes;	// This defines the triangle construction of the object.
 	Vector3 center; // The local space center of the object
 
@@ -97,7 +99,7 @@ public:
 		setCenter(Vector3(0.0f, 0.0f, 0.0f));
 	}
 
-	Model(Vector3 center, float scale, string filename);
+	Model(Vector3 center, float scale, string filename, string textureName = "");
 
 	virtual float getRadius() { return 0.0f; }
 

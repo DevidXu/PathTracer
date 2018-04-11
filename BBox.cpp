@@ -1,8 +1,6 @@
 #include "BBox.h"
 
-float MIN(float a, float b) {
-	return a < b ? a : b;
-}
+#define REFINED_CUBE_INTERSECT true
 
 
 // set the small and large bounding vector of a cube
@@ -52,7 +50,7 @@ void Cube::divideCube() {
 // parts: triangles in itself/leftcube/rightcube. It decides the divide boundary based on
 // the variance of the centroid of all triangles.
 void Cube::insertTriangleList(vector<Triangle*>& triangleList) {
-	if (triangleList.size() <= 1) {
+	if (triangleList.size() <= 4) {
 		for (auto ele : triangleList)
 			triangle_ptr.push_back(ele);
 		return;
@@ -317,7 +315,7 @@ Triangle* Cube::hitCloestTriangle(const shared_ptr<Ray> ray, float &distance, Ve
 
 	Triangle* min_Triangle = intersect(ray, &min_distance); // find the intersected triangles in the current cube size
 	min_distance = MIN(distance, min_distance);
-
+#if REFINED_CUBE_INTERSECT
 	// only called at the beginning of entering the recursive loop;
 	if (inPoint == outPoint) {
 		bool hit = hitRay(ray, inPoint, outPoint);
@@ -370,7 +368,7 @@ Triangle* Cube::hitCloestTriangle(const shared_ptr<Ray> ray, float &distance, Ve
 			}
 		}
 	}
-	/*
+#else
 	// test the side that intersects first, save some time
 	if (left && left->hitRay(ray, cube_distance) && cube_distance < min_distance) {
 		float t_d = MAX_DIS;
@@ -391,7 +389,8 @@ Triangle* Cube::hitCloestTriangle(const shared_ptr<Ray> ray, float &distance, Ve
 			min_Triangle = temp_triangle;
 		}
 	}
-	*/
+#endif
+
 	distance = min_distance;
 	return min_Triangle;
 

@@ -57,19 +57,43 @@ Vector3 Triangle::normalFaceUnit() {
 		if (dot<=0.0f) minus -= 1;
 	}
 
-	try {
-		_ASSERT(minus == -3 || plus == 3);
+	if (minus == -3 || plus == 3) {
+		if (minus == -3)
+			normalVector = Vector3() - result;
+		else
+			normalVector = result;
 	}
-	catch (exception e) {
-		throw("Wrong normal information! Can't generate normal vector.");
-	}
-
-	if (minus == -3) 
-		normalVector = Vector3(0.0f, 0.0f, 0.0f) - result;
-	else
-		normalVector = result;
+	else normalVector = result;
 
 	return normalVector;
+}
+
+
+Vector3 Triangle::getTexColor(Vector3 hit) {
+	if (!texture || !texcoord) return Vector3(1.0f, 1.0f, 1.0f);
+
+	Vector3 n12 = (*vertex[2] - *vertex[1]).normalize();
+	Vector3 n10 = (*vertex[0] - *vertex[1]).normalize();
+	Vector3 v13 = hit - *vertex[1];
+
+	float y = 0.0f, x = 0.0f;
+
+	float ytemp = ((*vertex[0] - *vertex[1]) * n12).magnitude();
+	if (ytemp < EPISILON) y = 0.0f;
+	else
+		y = (v13*n12).magnitude() / ytemp;
+
+	float xtemp = ((*vertex[2] - *vertex[1])*n10).magnitude();
+	if (xtemp < EPISILON) x = 0.0f;
+	else
+		x = (v13*n10).magnitude() / xtemp;
+
+	Vector2 interpolateTex = *texcoord[2] * x + *texcoord[0] * y + *texcoord[1] * (1 - x - y);
+	CvPoint tex(int(interpolateTex.value[0] * texture->cols), int((1-interpolateTex.value[1]) * texture->rows));
+	Vec3b vecColor = texture->at<Vec3b>(tex);
+	Vector3 color;
+	for (int i = 0; i < 3; i++) color.value[2-i] = vecColor[i] / 255.0f; // mat color is bgr
+	return color;
 }
 
 

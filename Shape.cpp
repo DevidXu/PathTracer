@@ -17,12 +17,16 @@ Shape::~Shape() {
 		delete ele;
 	for (auto& ele : normals)
 		delete ele;
+	for (auto& ele : texcoords)
+		delete ele;
 	for (auto& ele : meshes)
 		delete ele;
 
 	vertexs.clear();
 	normals.clear();
+	texcoords.clear();
 	meshes.clear();
+
 }
 
 
@@ -330,7 +334,7 @@ void Sphere::tessellate(float iteration, Object* obj) {
 }
 
 
-Model::Model(Vector3 move, float scale, string filename) {
+Model::Model(Vector3 move, float scale, string filename, string textureName) {
 	ifstream inf;
 	string s, s1, s2, s3, s4;
 	try {
@@ -342,30 +346,89 @@ Model::Model(Vector3 move, float scale, string filename) {
 		return;
 	}
 
+	if (textureName != "")
+		texture = imread(textureName, CV_LOAD_IMAGE_UNCHANGED);
+
 	while (getline(inf, s))
 	{
 		istringstream in(s);
 		in >> s1 >> s2 >> s3 >> s4;
 
-		if (s[0] == 'v') {
+		if (s[0] == 'v' && s[1]==' ') {
 			Vector3 *v = new Vector3(float(atof(s2.c_str())),float(atof(s3.c_str())),float(atof(s4.c_str())));
 			*v = *v * scale;
-			//*v = *v + move;
 			vertexs.push_back(v);
 
+		};
+
+		if (s[0] == 'v' && s[1] == 'n') {
 			Vector3 *n = new Vector3(float(atof(s2.c_str())), float(atof(s3.c_str())), float(atof(s4.c_str())));
 			n->normalize();
 			normals.push_back(n);
-		};
+		}
+
+		if (s[0] == 'v'&&s[1] == 't') {
+			Vector2 *t = new Vector2(float(atof(s2.c_str())), float(atof(s3.c_str())));
+			texcoords.push_back(t);
+		}
 
 		if (s[0] == 'f')
 		{
-			int a = atoi(s2.c_str()), b = atoi(s3.c_str()), c = atoi(s4.c_str());
+			vector<int> index1, index2, index3;
+			int pos;
+			pos = (int)s2.find("/");
+			while (pos != std::string::npos)
+			{
+				string x = s2.substr(0, pos);
+				index1.push_back(atoi(s2.substr(0, pos).c_str()));
+				s2 = s2.substr(pos + 1, s2.size());
+				pos = (int)s2.find("/");
+			}
+			index1.push_back(atoi(s2.substr(0, pos).c_str()));
 
-			Triangle* triangle = new Triangle(
-				vertexs[a-1], vertexs[b-1], vertexs[c-1],
-				normals[a-1], normals[b-1], normals[c-1]
-			);
+			pos = (int)s3.find("/");
+			while (pos != std::string::npos)
+			{
+				string x = s3.substr(0, pos);
+				index2.push_back(atoi(s3.substr(0, pos).c_str()));
+				s3 = s3.substr(pos + 1, s3.size());
+				pos = (int)s3.find("/");
+			}
+			index2.push_back(atoi(s3.substr(0, pos).c_str()));
+
+			pos = (int)s4.find("/");
+			while (pos != std::string::npos)
+			{
+				string x = s4.substr(0, pos);
+				index3.push_back(atoi(s4.substr(0, pos).c_str()));
+				s4 = s4.substr(pos + 1, s4.size());
+				pos = (int)s4.find("/");
+			}
+			index3.push_back(atoi(s4.substr(0, pos).c_str()));
+
+			Triangle* triangle = nullptr;
+			if (index1.size() == 1) { // no normal and texcoord
+				static bool generate = false;
+				if (!generate) {
+					for (auto& ele : vertexs) {
+						Vector3* n = new Vector3(*ele);
+						n->normalize();
+						normals.push_back(n);
+					}
+					generate = true;
+				}
+				triangle = new Triangle(
+					vertexs[index1[0] - 1], vertexs[index2[0] - 1], vertexs[index3[0] - 1],
+					vertexs[index1[0] - 1], vertexs[index2[0] - 1], vertexs[index3[0] - 1]
+				);
+			}
+			else {
+				triangle = new Triangle(
+					vertexs[index1[0] - 1], vertexs[index2[0] - 1], vertexs[index3[0] - 1],
+					normals[index1[2] - 1], normals[index2[2] - 1], normals[index3[2] - 1]
+				);
+				if (textureName != "") triangle->setTexcoord(texcoords[index1[1] - 1], texcoords[index2[1] - 1], texcoords[index3[1] - 1], &texture);
+			}
 
 			meshes.push_back(triangle);
 		}

@@ -2,7 +2,9 @@
 #include "World.h"
 #include <omp.h>
 
-#define SAMPLE_NUM	20  // must be times of 4
+#define SAMPLE_NUM	100 // must be times of 4
+
+#define DEBUG false
 
 World::World() {
 	// initialize the bounding box (Cornell box)
@@ -118,7 +120,11 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 	// record the intersection object, aborted now
 	Debug->recordPath(obj->getName(), &hitPoint);
 
+	// calculate the color by multiplying material color and texcoord color
 	Vector3 color = obj->getColor();
+	Vector3 texColor = patch->getTexColor(hitPoint);
+	for (int i=0;i<3;i++) color.value[i]*=texColor[i];
+
 	if (ray->getDepth() > MAX_DEPTH) {
 #if SMALL_DEPTH
 		return ENVIRONMENT_COLOR;
@@ -152,10 +158,14 @@ Vector3 World::pathTracing(shared_ptr<Ray> ray) {
 
 // This function begins path tracing and acts as core loop of this project
 bool World::renderScene() {
+	while (rd_pause) cvWaitKey(1000);
+
+	rd_begin = true;
 
 	int height = camera->getHeight(), width = camera->getWidth();
-	int sum_pixels = height * width;
-
+	_ASSERT(height_end > height_begin);
+	_ASSERT(width_end > width_begin);
+	int sum_pixels = (height_end - height_begin) * (width_end - width_begin);
 	Debug->timeCountStart();
 
 	// print log information to logging.txt
@@ -172,15 +182,18 @@ bool World::renderScene() {
 	LOGPRINT("OpenMP is not supported on your computer");
 #else
 	LOGPRINT("OpenMP is utilized for accelerating the parallel process.");
+#if !DEBUG
 #pragma omp parallel for schedule(dynamic, 1) private(color, normal, depth)
 #endif
-	for (int i = 0; i < height; i++) {
+#endif
+	for (int i = height_begin; i < height_end; i++) {
 		if (rd_exit) break;		// controlled by interface process
-		for (int j = 0; j < width; j++) {
+		for (int j = width_begin; j < width_end; j++) {
 			if (rd_exit) break;
 			// initialize the data for each process. Pay attention: all for loops are parallalized here
 			color = Vector3(); normal = Vector3();
 			depth = 0.0f;
+			vector<Vector3> color_array;	// used to calculate variance of per pixel
 
 			// generate origin rays
 			shared_ptr<PixelRays> rays = make_shared<PixelRays>();
@@ -198,10 +211,10 @@ bool World::renderScene() {
 
 				Debug->setSample(i, j, (rand() / (RAND_MAX + 1.0f)) < SAMPLE_RATE ? true : false);
 
-				Debug->timing("Path Tracing", true);
 				// call recursive progress to trace a ray
 				Vector3 pixel_color = pathTracing(ray);
-				Debug->timing("Path Tracing", false);
+#pragma omp critical		// avoid crash of OpenMP and vector operation
+				color_array.push_back(pixel_color);
 
 				Debug->recordColor(i, j, &pixel_color);
 
@@ -216,24 +229,37 @@ bool World::renderScene() {
 
 			// get the average and set 1.0f as maximum
 			color = color / (float)rays->size();
+			Vector3 variance = Vector3();
+			// variance need to be compared with uncompressed color
+			for (int k = 0; k < SAMPLE_NUM; k++)
+				for (int m = 0; m < 3; m++)
+#pragma omp critical
+					variance.value[m] += (color_array[k][m] - color[m])*(color_array[k][m] - color[m]);
+
 			for (int k = 0; k < 3; k++)
 				color.value[k] = color.value[k] > 1.0f ? 1.0f : color.value[k];
+
+			variance = variance / ((float)rays->size()-1); // un-biased estimate
+
 			normal = normal / (float)rays->size();
 			depth = depth / float(rays->size());
 
 			// update the pixel data in camera and interface
 			camera->Render(color, i, j);
-			winFace->updateData(color, normal, depth, i, j);
+			winFace->updateData(color, normal, variance, depth, i, j);
 
 			// print the progress
-			Debug->setProgress((i*width + j)*100.0f / sum_pixels);
+			Debug->setProgress(((i-height_begin)*(width_end-width_begin) + j-width_begin)*100.0f / sum_pixels);
 		}
 	}
 
 	// save the image and normalize the depth map, update images on the interface
 	rd_exit = true;
+	rd_finish = true;
+
 	camera->drawScene();
 	winFace->finishRender();
+
 	Debug->finishRender();
 
 	return true;

@@ -11,13 +11,17 @@
 #include "Constants.h"
 #include <memory>
 #include <vector>
+#include <opencv2/opencv.hpp>
+using namespace cv;
 
 class Object;
 
 class Triangle {
 private:
 	Vector3 * vertex[3];
-	Vector3* normal[3]; // each point has a normal
+	Vector3* normal[3];		// each point has a normal
+	Vector2* texcoord[3];	// each point has a texcoord point
+	Mat* texture;
 	Vector3 centroid;
 	Vector3 normalVector;
 	Object* owner;
@@ -43,10 +47,15 @@ public:
 	};
 
 	Triangle(Vector3* v0, Vector3* v1, Vector3* v2,
-		Vector3* n0, Vector3* n1, Vector3* n2, Object* m = nullptr) :Triangle(v0, v1, v2, m) {
+		Vector3* n0, Vector3* n1, Vector3* n2, Object* m = nullptr){
 		normal[0] = n0;
 		normal[1] = n1;
 		normal[2] = n2;
+
+		vertex[0] = v0;
+		vertex[1] = v1;
+		vertex[2] = v2;
+		owner = m;
 
 		infinite = false;
 
@@ -74,12 +83,23 @@ public:
 		normal[2] = n2;
 	}
 
+	void setTexcoord(Vector2* t0, Vector2* t1, Vector2* t2, Mat* tex) {
+		texcoord[0] = t0;
+		texcoord[1] = t1;
+		texcoord[2] = t2;
+		setTexture(tex);
+	}
+
 	void setNormalVector(Vector3 normalUnit) {
 		normalVector = normalUnit;
 	}
 
 	void setOwner(Object* m) {
 		owner = m;
+	}
+
+	void setTexture(Mat* tex) {
+		texture = tex;
 	}
 
 	void setInfinite(bool m_Infinite) {
@@ -98,6 +118,9 @@ public:
 	Vector3 getCentroid() {
 		return centroid;
 	}
+
+	// adopt uv texture coordinate (u means horizon(column first))
+	Vector3 getTexColor(Vector3 hit);
 
 	bool getInfinite() {
 		return infinite;

@@ -22,10 +22,10 @@ enum ImageType { ORIGIN, NORMAL, DEPTH, DEBUG };
 class Interface {
 public:
 	// update the color and depth and normal information of the mat class
-	void updateData(Vector3 color, Vector3 normal, float depth, int i, int j);
+	void updateData(Vector3 color, Vector3 normal, Vector3 variance, float depth, int i, int j);
 
 	// update all the images with information and pixels that have been rendered
-	void updateDebugImage();
+	void updateDebugImage(Vector3 color, int i, int j);
 
 	// finish the rendering; standard depth map and save images.
 	void finishRender();
@@ -42,12 +42,17 @@ public:
 	// read message from the console and process it
 	bool translateMessage(string s);
 
+	// set the NL means process boundary
+	void NLMeansProcess(int Ds, int ds);
+	void NLMeansProcessOrigin(int Ds, int ds);
+	Vector3 calculateDistance(CvPoint point, CvPoint origin);
+
 	Interface();
 	virtual ~Interface();
 
 
 private:
-	Mat *depthMap, *normalMap, *image, *debugMap;
+	Mat *depthMap, *normalMap, *image, *debugMap, *varianceMap;
 
 	void showText(Mat* image, CvPoint point, string s);
 };

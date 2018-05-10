@@ -6,14 +6,13 @@ Mesh of all objects loaded here:
     Right Wall is loaded successfully;
     Glass Ball is loaded successfully;
     Red Cube is loaded successfully;
-    Bunny is loaded successfully;
     Light is loaded successfully;
 
 
-Triangle number:    69738
-Bounding box depth: 15
+Triangle number:    72
+Bounding box depth: 4
 Resolution--Height: 256
 Resolution--Width:  256
-Num of Rays/Pixel:  100
+Num of Rays/Pixel:  40
 Max Depth for ray:  5
 OpenMP is utilized for accelerating the parallel process.

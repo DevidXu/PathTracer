@@ -5,7 +5,7 @@
 #include "Material.h"
 
 #define HI_BUNNY false	// whether render the bunny model (Note: it has over 60000 faces)
-#define HI_WOMAN true
+#define HI_WOMAN false
 
 void ObjectManager::initialize() {
 	shared_ptr<Object> box, left_wall, right_wall;
@@ -57,7 +57,7 @@ void ObjectManager::initialize() {
 		// the sphere of transparent material
 		glass_ball = make_shared<Object>(
 			make_shared<Sphere>(
-				Vector3(1.2f, 1.2f, 2.8f),
+				Vector3(1.0f, 1.2f, 2.8f),
 				0.7f
 				),
 			make_shared<Refl>(GLASS_REFRACTIVITY,
@@ -83,8 +83,8 @@ void ObjectManager::initialize() {
 
 		light = make_shared<Object>(
 			make_shared<Rectangle>(
-				Vector3(1.0f, 1.25f, 3.99f),
-				Vector3(2.5f, 2.75f, 4.0f)
+				Vector3(1.0f, 1.25f, 3.99f), // Vector3(0.1f, 3.99f, 0.1f),
+				Vector3(2.5f, 2.75f, 4.0f)   // Vector3(6.9f, 4.0f, 3.9f)
 				),
 			make_shared<Diff>(
 				Vector3(0.0f, 0.0f, 0.0f),
@@ -112,8 +112,8 @@ void ObjectManager::initialize() {
 #if HI_WOMAN
 		woman = make_shared<Object>(
 			make_shared<Model>(
-				Vector3(1.0f, 2.0f, 2.0f),
-				2.0f,
+				Vector3(1.2f, 2.0f, 2.0f),
+				2.3f,
 				"./woman.obj",
 				"./woman.jpg"
 				),

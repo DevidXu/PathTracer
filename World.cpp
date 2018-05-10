@@ -2,7 +2,7 @@
 #include "World.h"
 #include <omp.h>
 
-#define SAMPLE_NUM	100 // must be times of 4
+#define SAMPLE_NUM	40 // must be times of 4
 
 #define DEBUG false
 
@@ -18,7 +18,7 @@ World::World() {
 		CAMERA_POSITION,	// position
 		CAMERA_FORWARD	// forward
 		);
-
+	
 	// initialize the interactive interface
 	winFace = make_shared<Interface>();
 
